@@ -1,33 +1,22 @@
 doctype html
 html
 	head
-		title= title
+		title Embeded Viewer - Cambridge University Digital Library
 		link(rel='stylesheet', href='/stylesheets/player.css')
 		script(type='text/javascript' src="/scripts/openseadragon/openseadragon.js")
 		script(type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
 		script(type='text/javascript', src='/scripts/player.js')
-	body(id="player")
-			#header
-				#header-container
-					a(href="//cudl.lib.cam.ac.uk", rel="nofollow", title="University of Cambridge", class="logo")
+		script#cudl-metadata-template(type='text/html')
+			<h1 class="cudl-metadata-title"></h1>
+			<h2 class="cudl-metadata-authors"></h2>
+			<section class="cudl-metadata-abstract"></section>
+	body.cudl-viewer
+			header
+				a.cudl-logo(href="//cudl.lib.cam.ac.uk", rel="nofollow", title="University of Cambridge")
 					img(src="/images/brand/sponsor_cam.png", alt="University of Cambridge logo")
-			#content
-				#viewer-container
-					#viewer
-						script(type='text/javascript').
-							OpenSeadragon({
-							id: "viewer",
-							debugMode:  false,
-							showNavigationControl: false,
-							showNavigator: false,
-							springStiffness: 3,
-							animationTime: 0.7,
-							minPixelRatio: 0.3,
-							visibilityRatio: 1,
-							prefixUrl: "/images/viewer/",
-							tileSources: !{images}
-							});
-				#metadata-container
+			section.cudl-viewer-content
+				.cudl-viewer-player
+				article.cudl-viewer-metadata
 					#metadata
 						h2 Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit, dolore aliqua non est magna in labore pig pork biltong. Eiusmod swine spare ribs reprehenderit culpa.
 					#toggle

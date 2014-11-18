@@ -1,49 +1,80 @@
-/*.box { float: left; }*/
-/*#root { background: #000000; margin: 0 auto; }*/
+/* CSS reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* End reset */
+
 
 html, body {
 	height: 100%;
 	width: 100%;
 }
 
-#player { 
+.cudl-viewer {
 	overflow: hidden;
 	background: #000000;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	top: 0;
-	margin: 0 auto;
-	vertical-align: baseline; 
 }
-#header { 
-	border-bottom: 1px solid #4d4d4d; 
-	height: 45px;
+
+.cudl-viewer header {
+	border-bottom: 1px solid #4d4d4d;
+	/*height: 45px;*/
   	overflow: hidden;
 	padding-top: 7px;
 	padding-left: 20px;
 	vertical-align: baseline;
 }
-/*#header-container {
-	-webkit-transition: width 0.3s;
-  	-moz-transition: width 0.3s;
-  	-o-transition: width 0.3s;
-  	transition: width 0.3s false;
-  	margin: auto;
-  	position: relative;
-  	width: 960px;
-}*/
-#content { 
+
+.cudl-viewer-content {
 	height: 100%;
 	position: relative;
 	padding: 0;
 }
-#metadata-container {
+.cudl-viewer-metadata {
 	background: url("/stylesheets/assets/bg-hero-header.png");
 	color: #ffffff;
 	position: absolute;
   	height: 100%;
-  	right: -320px;
+  	right: 0px;
   	top: 0;
   	width: 320px;
 }
@@ -56,10 +87,11 @@ html, body {
   	position: absolute;
   	top: 0;
 }
-#viewer-container { height: 100%; width: 100%;
-}
 
-#viewer { height: 100%; width: 100%; }
+.cudl-viewer-player {
+	height: 100%;
+	width: 100%;
+}
 
 /* Laptop/Tablet (1024px) */
 @media only screen and (max-width: 960px) {
