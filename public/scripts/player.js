@@ -172,7 +172,8 @@ $(function() {
         },
 
         render: function render() {
-            this.$el.empty().append(this.renderTemplate());
+            this.$el.find(".cudl-viewer-metadata-container")
+                .empty().append(this.renderTemplate());
         },
 
         onMetadataAvailable: function onMetadataAvailable(metadata) {

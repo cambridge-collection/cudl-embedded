@@ -42,9 +42,18 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-/* End reset */
 
 
+/* Use border-box */
+html {
+	box-sizing: border-box;
+}
+*, *:before, *:after {
+	box-sizing: inherit;
+}
+
+
+/* Custom fonts */
 @font-face {
 	font-family: "CharisSIL";
 	src: url("/fonts/CharisSIL-R.ttf");
@@ -56,6 +65,7 @@ table {
 	font-weight: bold;
 }
 
+
 html {
 	font-family: CharisSIL, Georgia, 'Times New Roman', serif;
 	color: #e5e5e5;
@@ -64,6 +74,48 @@ html {
 html, body {
 	height: 100%;
 	width: 100%;
+	font-size: 14px;
+}
+
+h1 {
+	font-size: 24px;
+	font-weight: bold;
+	margin: 18px 0;
+}
+
+h2 {
+	font-size: 17px;
+	margin: 14px 0;
+}
+
+p, .videoCaption {
+	margin: 5px 0;
+}
+
+a {
+	color: #8FB2E8;
+}
+
+.videoCaption {
+	position: relative;
+	width: 100%;
+	padding-bottom: 56.25%;
+}
+.videoCaption object,
+.videoCaption embed {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.cudl-metadata-authors {
+	font-size: 14px;
+}
+
+.cudl-author {
+	font-size: 17px;
 }
 
 .cudl-viewer {
@@ -105,7 +157,7 @@ html, body {
 	padding: 0;
 }
 .cudl-viewer-metadata {
-	padding: 18px;
+	padding: 0 18px 18px 18px;
 
 	background-color: rgba(0, 0, 0, 0.88);
 	border-left: 1px solid #535353;
@@ -117,13 +169,15 @@ html, body {
 		rgba(0, 0, 0, 0.88);
 	box-shadow: -4px 0px 5px 0 rgba(0, 0, 0, 0.35);
 
+	/* Position on the right, under the header bar. */
 	position: absolute;
-  	height: 100%;
-  	right: 0px;
-  	top: 0;
+  	right: 0;
+  	top: 32px;
+	bottom: 0;
   	width: 320px;
 
-	margin: 32px 0 0 0;
+	-webkit-overflow-scrolling: touch;
+	overflow-y: auto;
 }
 
 .cudl-viewer-player {
@@ -131,6 +185,25 @@ html, body {
 	width: 100%;
 }
 
+.cudl-viewer-buttons {
+	position: absolute;
+	left: 10px;
+	bottom: 10px;
+}
+.cudl-viewer-buttons .cudl-btn {
+	margin: 4px;
+}
+
+.cudl-btn {
+	border: 1px solid #a7a7a7;
+	background: rgba(41, 41, 41, 0.8);
+	border-radius: 4px;
+	color: white;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	box-shadow: 0px 4px 5px 0 rgba(0, 0, 0, 0.35);
+}
 
 /*
 #metadata {

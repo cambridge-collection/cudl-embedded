@@ -3,6 +3,7 @@ html
 	head
 		title Embeded Viewer - Cambridge University Digital Library
 		link(rel='stylesheet', href='/stylesheets/player.css')
+		link(rel='stylesheet', href='/lib/font-awesome/css/font-awesome.css')
 		script(type='text/javascript' src="/scripts/openseadragon/openseadragon.js")
 		script(type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
 		script(type='text/javascript', src='/scripts/player.js')
@@ -13,7 +14,13 @@ html
 	body.cudl-viewer
 			header
 				a.cudl-logo(href="http://cudl.lib.cam.ac.uk", rel="nofollow", title="University of Cambridge")
-					//img(src="/images/player/cam-logo-header.png", alt="University of Cambridge logo")
 			section.cudl-viewer-content
 				.cudl-viewer-player
+				.cudl-viewer-buttons
+					button.cudl-btn.cudl-btn-rotate-left.fa.fa-rotate-left
+					button.cudl-btn.cudl-btn-rotate-right.fa.fa-rotate-right
+					button.cudl-btn.cudl-btn-expand.fa.fa-expand
+					button.cudl-btn.cudl-btn-compress.fa.fa-compress
 				article.cudl-viewer-metadata
+					.cudl-metadata-toggle
+					.cudl-viewer-metadata-container
