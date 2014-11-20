@@ -72,18 +72,19 @@ html, body {
 }
 
 .cudl-viewer header {
-	border-bottom: 1px solid #494949;
+
   	overflow: hidden;
 	position: absolute;
 	z-index: 1;
 	width: 100%;
+
+	border-bottom: 1px solid #535353;
 	background:
 		linear-gradient(
 			to top,
 			rgba(255, 255, 255, 0.08) 0%,
 			rgba(255, 255, 255, 0) 6px),
 		rgba(0, 0, 0, 0.88);
-
 	box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.35);
 
 	/* TODO: ensure contents match this */
@@ -107,7 +108,14 @@ html, body {
 	padding: 18px;
 
 	background-color: rgba(0, 0, 0, 0.88);
-	border-left: 1px solid #494949;
+	border-left: 1px solid #535353;
+	background:
+		linear-gradient(
+				to right,
+				rgba(255, 255, 255, 0.08) 0%,
+				rgba(255, 255, 255, 0) 10px),
+		rgba(0, 0, 0, 0.88);
+	box-shadow: -4px 0px 5px 0 rgba(0, 0, 0, 0.35);
 
 	position: absolute;
   	height: 100%;
