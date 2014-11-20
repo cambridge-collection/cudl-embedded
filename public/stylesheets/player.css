@@ -45,6 +45,22 @@ table {
 /* End reset */
 
 
+@font-face {
+	font-family: "CharisSIL";
+	src: url("/fonts/CharisSIL-R.ttf");
+}
+
+@font-face {
+	font-family: "CharisSIL";
+	src: url("/fonts/CharisSIL-B.ttf");
+	font-weight: bold;
+}
+
+html {
+	font-family: CharisSIL, Georgia, 'Times New Roman', serif;
+	color: #e5e5e5;
+}
+
 html, body {
 	height: 100%;
 	width: 100%;
@@ -56,29 +72,60 @@ html, body {
 }
 
 .cudl-viewer header {
-	border-bottom: 1px solid #4d4d4d;
-	/*height: 45px;*/
+	border-bottom: 1px solid #494949;
   	overflow: hidden;
-	padding-top: 7px;
-	padding-left: 20px;
-	vertical-align: baseline;
+	position: absolute;
+	z-index: 1;
+	width: 100%;
+	background:
+		linear-gradient(
+			to top,
+			rgba(255, 255, 255, 0.08) 0%,
+			rgba(255, 255, 255, 0) 6px),
+		rgba(0, 0, 0, 0.88);
+
+	box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.35);
+
+	/* TODO: ensure contents match this */
+	height: 32px;
+}
+
+.cudl-logo {
+	background: url("/images/player/cam-logo-header.png") no-repeat;
+	width: 100px;
+	height: 24px;
+	display: inline-block;
+	margin: 5px 0 0 6px;
 }
 
 .cudl-viewer-content {
 	height: 100%;
-	position: relative;
+	/*position: relative;*/
 	padding: 0;
 }
 .cudl-viewer-metadata {
-	background: url("/stylesheets/assets/bg-hero-header.png");
-	color: #ffffff;
+	padding: 18px;
+
+	background-color: rgba(0, 0, 0, 0.88);
+	border-left: 1px solid #494949;
+
 	position: absolute;
   	height: 100%;
   	right: 0px;
   	top: 0;
   	width: 320px;
+
+	margin: 32px 0 0 0;
 }
-#metadata { 
+
+.cudl-viewer-player {
+	height: 100%;
+	width: 100%;
+}
+
+
+/*
+#metadata {
 	height: 100%;
 	margin: 0 5px 0 20px;
 	-webkit-overflow-scrolling: touch;
@@ -87,78 +134,4 @@ html, body {
   	position: absolute;
   	top: 0;
 }
-
-.cudl-viewer-player {
-	height: 100%;
-	width: 100%;
-}
-
-/* Laptop/Tablet (1024px) */
-@media only screen and (max-width: 960px) {
-	
-	#player { width: 100%; }
-	#header { width: 100%; }
-	/*#header-container { width: 748px; }*/
-	#content { height: 100%; width: 100%; }
-	#metadata-panel { width: 100%; }
-	#metadata-content { width: 100%; }
-	#viewer-container { height: 100%; width: 100%; }
-	#viewer { height: 100%; width: 100%; }
-
-}
-
-
-
-/* Tablet Portrait (768px) */
-@media only screen and (max-width: 767px) {
-
-	#player { width: 100%; }
-	#header { width: 100%; }
-	/*#header-container { width: 420px; }*/
-	#content { width: 100%; }
-	#metadata-panel { width: 100%; }
-	#metadata-content { width: 100%; }
-	#viewer-container { width: 100%; }
-	#viewer { width: 100%; }
-}
-
-/* Phone Landscape (480px) */
-@media only screen and (max-width: 420px) {
-
-	#player { width: 100%; }
-	#header { width: 100%; }
-	/*#header-container { width: 300px; }*/
-	#content { width: 100%; }
-	#metadata-panel { width: 100%; }
-	#metadata-content { width: 100%; }
-	#viewer-container { width: 100%; }
-	#viewer { width: 100%; }
-}
-
-/* Phone Portrait (320px) */
-@media only screen and (max-width: 320px) {
-
-	#player { width: 100%; }
-	#header { width: 100%; }
-	#content { width: 100%; }
-	#metadata-panel { width: 100%; }
-	#metadata-content { width: 100%; }
-	#viewer-container { width: 100%; }
-	#viewer { width: 100%; }
-}
-
-.logo {
-	float: left;
-	width: 177px;
-}
-#toggle {
-  background: url("/stylesheets/assets/togglePanelInverted.png") no-repeat 0;
-  position: absolute;
-  top: 0; left: -22px;
-  height: 33px;
-  width: 22px;
-}
-
-#toggle:hover {
-	cursor: pointer;
-}
+*/
