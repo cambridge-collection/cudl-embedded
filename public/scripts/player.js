@@ -93,6 +93,50 @@ $(function() {
     });
 
 
+    var CudlViewerButtonsView = extend(function CudlViewerButtonsView(options) {
+        CudlViewerButtonsView.super.call(this, options);
+
+        this.viewerView = options.viewerView;
+
+        this.bindEvents();
+    }, View);
+    $.extend(CudlViewerButtonsView.prototype, {
+        bindEvents: function bindEvents() {
+            events = {
+                ".cudl-btn-rotate-right": $.proxy(this.rotate, this, 1),
+                ".cudl-btn-rotate-left": $.proxy(this.rotate, this, -1),
+                ".cudl-btn-expand": $.proxy(this.zoom, this, "in"),
+                ".cudl-btn-compress": $.proxy(this.zoom, this, "out")
+            };
+            for(event in events) {
+                this.$el.on("click", event, events[event]);
+            }
+        },
+
+        rotate: function rotate(direction) {
+            var viewer = this.viewerView.getViewer();
+            var viewport = viewer.viewport;
+
+            viewport.setRotation(viewport.getRotation() + 90 * direction);
+        },
+
+        zoom: function zoom(direction) {
+            var viewer = this.viewerView.getViewer();
+            var viewport = viewer.viewport;
+            var delta;
+
+            if(direction === "in") {
+                delta = 0.2;
+            }
+            else {
+                delta = -0.2;
+            }
+            viewport.zoomTo(viewport.getZoom() * (1 + delta));
+            viewport.applyConstraints();
+        }
+    });
+
+
 
     function CudlViewerView(options) {
         CudlViewerView.super.call(this, options);
@@ -120,6 +164,10 @@ $(function() {
         onMetadataAvailable: function onMetadataAvailable() {
             this.metadata = this.viewerModel.getMetadata();
             this.createViewer();
+        },
+
+        getViewer: function getViewer() {
+            return this.viewer;
         },
 
         onImageNumberChanged: function onImageNumberChanged() {
@@ -454,5 +502,10 @@ $(function() {
     var imageNumberView = new CudlImageNumberView({
         el: $(".cudl-page-position")[0],
         viewerModel: cudlViewerModel
+    });
+
+    var viewerButtonsView = new CudlViewerButtonsView({
+        el: $(".cudl-viewer-buttons")[0],
+        viewerView: viewerView
     });
 });
