@@ -13,7 +13,13 @@ html
 			<section class="cudl-metadata-abstract"></section>
 	body.cudl-viewer
 			header
-				a.cudl-logo(href="http://cudl.lib.cam.ac.uk", rel="nofollow", title="University of Cambridge")
+				a.cudl-logo(href="http://cudl.lib.cam.ac.uk", target="_blank" rel="nofollow", title="University of Cambridge")
+				.cudl-page-position
+					button.cudl-btn.cudl-btn-img-prev.fa.fa-arrow-left
+					input.cudl-img-number.cudl-img-current(name="img-number", value="1", type="text")
+					| /
+					span.cudl-img-number.cudl-img-last 924
+					button.cudl-btn.cudl-btn-img-next.fa.fa-arrow-right
 			section.cudl-viewer-content
 				.cudl-viewer-player
 				.cudl-viewer-buttons

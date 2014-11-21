@@ -159,7 +159,72 @@ a {
 	height: 24px;
 	display: inline-block;
 	margin: 5px 0 0 6px;
+
+	position: relative;
+	z-index: 4;
 }
+
+.cudl-page-position {
+	text-align: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	padding: 3px 0 0 0;
+	z-index: 3;
+}
+.cudl-page-position > * {
+	vertical-align: baseline;
+}
+.cudl-page-position .cudl-btn {
+	margin: 0 6px;
+}
+.cudl-img-number {
+	min-width: 2.5em;
+	display: inline-block;
+}
+
+/* The img/page number input which looks like regular text while not being
+   interacted with. */
+.cudl-img-current {
+	margin-right: 3px;
+	text-align: right;
+	/*cursor: pointer;*/
+	border-bottom: 1px solid #858585;
+	width: 2.5em;
+	padding: 0;
+
+	/* Override input styling to look like regular text */
+	background: none;
+	border: 1px transparent;
+	border-radius: 3px;
+
+	transition: background 0.1s, border 0.1s;
+}
+.cudl-img-current:hover, .cudl-img-current:focus {
+	background: #ececec;
+	color: #3b3b3b;
+}
+.cudl-img-current:hover:not(:focus) {
+	background: #e1e1e1;
+	box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35),
+				0 0 5px 2px rgba(255, 255, 255, 0.5);
+	border: 1px solid #e1e1e1;
+}
+.cudl-img-current:focus {
+	outline: none;
+	box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35),
+				0 0 5px 2px rgba(72, 147, 232, 0.5);
+	border: 1px solid #61a8f1
+}
+.cudl-img-last {
+	margin-left: 3px;
+	text-align: left;
+}
+
+
+
 
 .cudl-viewer-content {
 	height: 100%;
@@ -173,7 +238,13 @@ a {
 	top: 32px;
 	bottom: 0;
 	width: 320px;
+
+	transition: right 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
+.cudl-viewer-metadata.hidden {
+	right: -304px;
+}
+
 .cudl-viewer-metadata-container {
 	background-color: rgba(0, 0, 0, 0.88);
 	border-left: 1px solid #535353;
@@ -238,7 +309,7 @@ a {
 	box-shadow: 4px 0px 5px 0 rgba(0, 0, 0, 0.35);
 	z-index: 1;
 }
-.shown .cudl-metadata-toggle-btn:before {
+.cudl-metadata-toggle-btn:before {
 	content: "Hide";
 }
 .hidden .cudl-metadata-toggle-btn:before {
