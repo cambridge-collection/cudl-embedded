@@ -42,34 +42,93 @@ $(function() {
     }
 
 
+    var CudlImageNumberView = extend(function CudlImageNumberView(options) {
+        CudlImageNumberView.super.call(this, options);
+
+        this.viewerModel = options.viewerModel;
+        this.$imgCurrent = this.$el.find(".cudl-img-current");
+
+        $(this.viewerModel).on(
+            "change:metadata", $.proxy(this.onMetadataChanged, this));
+        $(this.viewerModel).on(
+            "change:imageNumber", $.proxy(this.onImageNumberChanged, this));
+
+        this.$el
+            .on("change", ".cudl-img-current",
+                $.proxy(this.onImageNumberEdited, this))
+            .on("click", ".cudl-btn-img-prev",
+                $.proxy(this.incrementImageNumber, this, -1))
+            .on("click", ".cudl-btn-img-next",
+                $.proxy(this.incrementImageNumber, this, 1));
+
+    }, View);
+    $.extend(CudlImageNumberView.prototype, {
+        onMetadataChanged: function onMetadataChanged() {
+            this.$el.find(".cudl-img-last").text(this.viewerModel.getImageCount());
+        },
+
+        onImageNumberChanged: function onImageNumberChanged() {
+            this.$imgCurrent.val(this.viewerModel.getImageNumber());
+        },
+
+        onImageNumberEdited: function onImageNumberEdited() {
+            this._tryToSetImageNumber(parseInt(this.$imgCurrent.val(), 10));
+        },
+
+        incrementImageNumber: function incrementImageNumber(count) {
+            this._tryToSetImageNumber(
+                this.viewerModel.getImageNumber() + count);
+        },
+
+        _tryToSetImageNumber: function _tryToSetImageNumber(newNumber) {
+            // Ensure the new number is valid
+            if(isNaN(newNumber) || newNumber < 1 ||
+                newNumber > this.viewerModel.getImageCount()) {
+                newNumber = this.viewerModel.getImageNumber();
+            }
+            // Also resets the input to a valid number if it was edited to be
+            // invalid
+            this.viewerModel.setImageNumber(newNumber);
+        }
+    });
+
+
+
     function CudlViewerView(options) {
         CudlViewerView.super.call(this, options);
 
+        this.viewerModel = options.viewerModel;
+        if(!this.viewerModel) {
+            throw new ReferenceError("No options.viewerModel provided");
+        }
+
+        $(this.viewerModel)
+            .on("change:metadata", $.proxy(this.onMetadataAvailable, this))
+            .on("change:imageNumber", $.proxy(this.onImageNumberChanged, this));
+
         this.viewer = null;
-        this.metadata = null;
         // OpenSeaDragon seems to need a unique ID for each instance
         this.hash = "cudl-player-" + CudlViewerView._hash++;
 
-        options = $.extend({}, CudlViewerView.DEFAULT_OPTIONS, options);
-
-        this.cudl = options.cudl;
-
-        options.metadata.done($.proxy(this.onMetadataAvailable, this));
+        this.cudlService = this.viewerModel.getCudlService();
     }
     extend(CudlViewerView, View);
 
     CudlViewerView._hash = 1;
 
-    CudlViewerView.DEFAULT_OPTIONS = {
-        cudl: new CudlService(),
-        metadata: null,
-        imageNumber: 1
-    };
-
     $.extend(CudlViewerView.prototype, {
-        onMetadataAvailable: function onMetadataAvailable(metadata) {
-            this.metadata = metadata;
+        onMetadataAvailable: function onMetadataAvailable() {
+            this.metadata = this.viewerModel.getMetadata();
             this.createViewer();
+        },
+
+        onImageNumberChanged: function onImageNumberChanged() {
+            // Our page numbers are 1-based, the Viewer's are 0-based.
+            var number = this.viewerModel.getImageNumber() - 1;
+            if(this.viewer !== null
+                    && this.viewer.currentPage() !== number) {
+                this.viewer.goToPage(number);
+            }
         },
 
         createViewer: function createViewer() {
@@ -85,7 +144,7 @@ $(function() {
         },
 
         getTileSources: function getTileSources() {
-            var cudl = this.cudl;
+            var cudl = this.cudlService;
             return $.map(this.metadata.getPages(), function(page) {
                 return cudl.getDziUrl(page.displayImageURL);
             });
@@ -136,8 +195,12 @@ $(function() {
         this.template = options.template;
         this.metadata = null;
 
-        var futureMetadata = options.metadata;
-        futureMetadata.done($.proxy(this.onMetadataAvailable, this));
+        this.viewerModel = options.viewerModel;
+        $(this.viewerModel).on(
+            "change:metadata", $.proxy(this.onMetadataAvailable, this));
+
+        this.$el.on("click", ".cudl-metadata-toggle-btn",
+            $.proxy(this.onShowHideToggled, this));
     }, View);
 
     CudlMetadataView.DEFAULT_OPTIONS = {
@@ -145,6 +208,10 @@ $(function() {
     };
 
     $.extend(CudlMetadataView.prototype, {
+        onShowHideToggled: function onShowHideToggled(e) {
+            this.$el.toggleClass("hidden");
+        },
+
         renderTemplate: function renderTemplate() {
             var md = this.metadata;
             var $el = $("<div>").html($(this.template).text());
@@ -176,8 +243,8 @@ $(function() {
                 .empty().append(this.renderTemplate());
         },
 
-        onMetadataAvailable: function onMetadataAvailable(metadata) {
-            this.metadata = metadata;
+        onMetadataAvailable: function onMetadataAvailable() {
+            this.metadata = this.viewerModel.getMetadata();
             this.render();
         }
     });
@@ -287,27 +354,105 @@ $(function() {
         }
     });
 
+    function CudlViewerModel(options) {
+        options = $.extend({}, CudlViewerModel.DEFAULT_OPTIONS, options);
+
+        this.cudlService = options.cudlService;
+        this.metadata = null;
+        this.imageNumber = options.imageNumber;
+
+        options.metadata.done($.proxy(this.onMetadataAvailable, this));
+        options.metadata;
+    }
+    CudlViewerModel.DEFAULT_OPTIONS = {
+        cudlService: new CudlService(),
+        metadata: null,
+        imageNumber: 1
+    }
+    $.extend(CudlViewerModel.prototype, {
+        onMetadataAvailable: function onMetadataAvailable(metadata) {
+            this.metadata = metadata;
+
+
+            // Ensure the page number is within bounds
+            var imageNumber = this.imageNumber;
+            try {
+                this.setImageNumber(this.imageNumber, true);
+            }
+            catch(e) {
+                // Default the image number if it was invalid
+                imageNumber = 1;
+            }
+
+            $(this).trigger("change:metadata", metadata);
+            // Set the number again to re-trigger the change event
+            this.setImageNumber(imageNumber);
+        },
+
+        getImageNumber: function getImageNumber() {
+            return this.imageNumber;
+        },
+
+        setImageNumber: function setImageNumber(image, silent) {
+            if(image < 1 || image > this.getImageCount()) {
+                throw new RangeError("image out of range: " + image);
+            }
+            this.imageNumber = image;
+
+            if(silent !== true) {
+                $(this).trigger("change:imageNumber");
+            }
+        },
+
+        getImageCount: function getImageCount() {
+            return this.getMetadata().getPages().length;
+        },
+
+        getMetadata: function getMetadata() {
+            return this.metadata;
+        },
+
+        getCudlService: function getCudlService() {
+            return this.cudlService;
+        }
+
+    });
+
     function getItemId() {
         return parseUriQuery(window.location.search).item
             || "PR-01890-00011-00067"; // The book of bosh!
     }
 
-    var cudl = new CudlService({
+    function getStartPage() {
+        return parseInt(parseUriQuery(window.location.search).page, 10) || 1;
+    }
+
+    var cudlService = new CudlService({
         metadataUrlPrefix: "http://localhost:3000/v1/metadata/json/",
         metadataUrlSuffix: "",
         dziUrlPrefix: "http://cudl.lib.cam.ac.uk"
     });
 
-    var futureMetadata = cudl.getMetadata(getItemId());
+    var futureMetadata = cudlService.getMetadata(getItemId());
+
+    var cudlViewerModel = new CudlViewerModel({
+        cudlService: cudlService,
+        metadata: futureMetadata,
+        imageNumber: getStartPage()
+    });
 
     var viewerView = new CudlViewerView({
         el: $(".cudl-viewer-player")[0],
-        cudl: cudl,
-        metadata: futureMetadata
+        viewerModel: cudlViewerModel
     });
 
     var metadataView = new CudlMetadataView({
         el: $(".cudl-viewer-metadata")[0],
-        metadata: futureMetadata
+        viewerModel: cudlViewerModel
+    });
+
+    var imageNumberView = new CudlImageNumberView({
+        el: $(".cudl-page-position")[0],
+        viewerModel: cudlViewerModel
     });
 });
