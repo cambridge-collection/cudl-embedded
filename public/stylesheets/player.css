@@ -55,19 +55,29 @@ html {
 
 /* Custom fonts */
 @font-face {
-	font-family: "CharisSIL";
-	src: url("/fonts/CharisSIL-R.ttf");
+	font-family: CharisSILW;
+	src: url(/fonts/CharisSIL-R.woff);
 }
-
 @font-face {
-	font-family: "CharisSIL";
-	src: url("/fonts/CharisSIL-B.ttf");
+	font-family: CharisSILW;
+	font-style: italic;
+	src: url(/fonts/CharisSIL-I.woff);
+}
+@font-face {
+	font-family: CharisSILW;
 	font-weight: bold;
+	src: url(/fonts/CharisSIL-B.woff);
+}
+@font-face {
+	font-family: CharisSILW;
+	font-weight: bold;
+	font-style: italic;
+	src: url(/fonts/CharisSIL-BI.woff);
 }
 
 
-html, button {
-	font-family: CharisSIL, Georgia, 'Times New Roman', serif;
+html, button, input[type=text] {
+	font-family: CharisSILW, Georgia, 'Times New Roman', serif;
 	color: #e5e5e5;
 }
 
