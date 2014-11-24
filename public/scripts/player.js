@@ -108,7 +108,7 @@ $(function() {
                 ".cudl-btn-expand": $.proxy(this.zoom, this, "in"),
                 ".cudl-btn-compress": $.proxy(this.zoom, this, "out")
             };
-            for(event in events) {
+            for(var event in events) {
                 this.$el.on("click", event, events[event]);
             }
         },
@@ -173,8 +173,8 @@ $(function() {
         onImageNumberChanged: function onImageNumberChanged() {
             // Our page numbers are 1-based, the Viewer's are 0-based.
             var number = this.viewerModel.getImageNumber() - 1;
-            if(this.viewer !== null
-                    && this.viewer.currentPage() !== number) {
+            if(this.viewer !== null &&
+                    this.viewer.currentPage() !== number) {
                 this.viewer.goToPage(number);
             }
         },
@@ -213,7 +213,7 @@ $(function() {
 
         var pieces = [];
         var sep;
-        for(i in items) {
+        for(var i in items) {
             pieces.push(items[i]);
 
             if(i < items.length - 2) sep = ", ";
@@ -358,7 +358,7 @@ $(function() {
         indexDescriptionMetadata: function indexDescriptionMetadata(json) {
             var index = {};
             var descs = json.descriptiveMetadata;
-            for(i in descs) {
+            for(var i in descs) {
                 index[descs[i].ID] = descs[i];
             }
             return index;
@@ -412,13 +412,12 @@ $(function() {
         this.itemId = options.itemId;
 
         options.metadata.done($.proxy(this.onMetadataAvailable, this));
-        options.metadata;
     }
     CudlViewerModel.DEFAULT_OPTIONS = {
         cudlService: new CudlService(),
         metadata: null,
         imageNumber: 1
-    }
+    };
     $.extend(CudlViewerModel.prototype, {
         onMetadataAvailable: function onMetadataAvailable(metadata) {
             this.metadata = metadata;
@@ -464,13 +463,17 @@ $(function() {
 
         getCudlService: function getCudlService() {
             return this.cudlService;
+        },
+
+        getItemCudlUrl: function getItemCudlUrl() {
+            return "http://cudl.lib.cam.ac.uk/view/" + encodeURIComponent(this.itemId);
         }
 
     });
 
     function getItemId() {
-        return parseUriQuery(window.location.search).item
-            || "PR-01890-00011-00067"; // The book of bosh!
+        return parseUriQuery(window.location.search).item ||
+            "PR-01890-00011-00067"; // The book of bosh!
     }
 
     function getStartPage() {
