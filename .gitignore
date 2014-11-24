@@ -5,6 +5,9 @@
 *.swp
 *.out
 *.svn
+.idea
+*.iml
+*.log
 
 ## Dependencies
 node_modules/
