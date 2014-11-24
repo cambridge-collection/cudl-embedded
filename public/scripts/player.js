@@ -264,7 +264,8 @@ $(function() {
             var md = this.metadata;
             var $el = $("<div>").html($(this.template).text());
 
-            $el.find(".cudl-metadata-title").text(md.getTitle());
+            $el.find(".cudl-metadata-title a").text(md.getTitle());
+            $el.find(".cudl-metadata-title a").attr("href", this.viewerModel.getItemCudlUrl());
             $el.find(".cudl-metadata-authors").append(this.renderAuthors());
             $el.find(".cudl-metadata-abstract").html(md.getAbstract());
 
@@ -408,6 +409,7 @@ $(function() {
         this.cudlService = options.cudlService;
         this.metadata = null;
         this.imageNumber = options.imageNumber;
+        this.itemId = options.itemId;
 
         options.metadata.done($.proxy(this.onMetadataAvailable, this));
         options.metadata;
@@ -476,14 +478,16 @@ $(function() {
     }
 
     var cudlService = new CudlService({
-        metadataUrlPrefix: "http://localhost:3000/v1/metadata/json/",
+        metadataUrlPrefix: "/v1/metadata/json/",
         metadataUrlSuffix: "",
         dziUrlPrefix: "http://cudl.lib.cam.ac.uk"
     });
 
-    var futureMetadata = cudlService.getMetadata(getItemId());
+    var itemId = getItemId();
+    var futureMetadata = cudlService.getMetadata(itemId);
 
     var cudlViewerModel = new CudlViewerModel({
+        itemId: itemId,
         cudlService: cudlService,
         metadata: futureMetadata,
         imageNumber: getStartPage()

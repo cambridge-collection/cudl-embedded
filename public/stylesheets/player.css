@@ -120,12 +120,26 @@ a {
 	height: 100%;
 }
 
+.cudl-metadata-title a {
+	text-decoration: none;
+	color: inherit;
+}
+.cudl-metadata-title a:hover {
+	text-decoration: underline;
+}
+
+
 .cudl-metadata-authors {
 	font-size: 14px;
 }
 
 .cudl-author {
 	font-size: 17px;
+}
+
+.cudl-copyright-statement {
+	font-size: 0.8em;
+	margin: 1.5em 0;
 }
 
 .cudl-viewer {
@@ -153,7 +167,7 @@ a {
 	height: 32px;
 }
 
-.cudl-logo {
+.cudl-ucam-logo {
 	background: url("/images/player/cam-logo-header.png") no-repeat;
 	width: 100px;
 	height: 24px;
@@ -162,6 +176,16 @@ a {
 
 	position: relative;
 	z-index: 4;
+}
+
+.cudl-logo {
+	width: 49%;
+	padding-right: 5px;
+}
+
+.cudl-cul-logo {
+	padding-left: 5px;
+	width: 49%;
 }
 
 .cudl-page-position {
@@ -266,6 +290,11 @@ a {
 	z-index: 2;
 }
 
+.cudl-viewer-metadata-container footer {
+	border-top: 1px solid #626262;
+	padding-top: 12px;
+}
+
 .cudl-viewer-player {
 	height: 100%;
 	width: 100%;
@@ -294,6 +323,15 @@ a {
 	padding: 0;
 	box-shadow: 0px 4px 5px 0 rgba(0, 0, 0, 0.35);
 	cursor: pointer;
+}
+.cudl-btn:focus {
+
+}
+.cudl-btn:hover {
+
+}
+.cudl-btn:active {
+	background: #d09d02;
 }
 
 .cudl-metadata-toggle-btn {

@@ -9,12 +9,17 @@ html
 		script(type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
 		script(type='text/javascript', src='/scripts/player.js')
 		script#cudl-metadata-template(type='text/html')
-			<h1 class="cudl-metadata-title"></h1>
-			<h2 class="cudl-metadata-authors"></h2>
-			<section class="cudl-metadata-abstract"></section>
+			| <h1 class="cudl-metadata-title"><a title="View this item on the Cambridge University Digital Library" target="_blank"></a></h1>
+			| <h2 class="cudl-metadata-authors"></h2>
+			| <section class="cudl-metadata-abstract"></section>
+			| <p class="cudl-copyright-statement">Zooming image © Cambridge University Library, All rights reserved.</p>
+			| <footer>
+			|   <a title="University of Cambridge Digital Library" target="_blank" href="http://cudl.lib.cam.ac.uk/"><img class="cudl-logo" alt="University of Cambridge Digital Library" src="/images/player/cudl-logo-huge.png"></a>
+			|   <a title="Cambridge University Library" target="_blank" href="http://lib.cam.ac.uk/"><img class="cudl-cul-logo" src="/images/player/cul-logo-huge.png"></a>
+			| </footer>
 	body.cudl-viewer
 			header
-				a.cudl-logo(href="http://cudl.lib.cam.ac.uk", target="_blank" rel="nofollow", title="University of Cambridge")
+				a.cudl-ucam-logo(href="https://cam.ac.uk/", target="_blank", title="University of Cambridge")
 				.cudl-page-position
 					button.cudl-btn.cudl-btn-img-prev.fa.fa-arrow-left
 					input.cudl-img-number.cudl-img-current(name="img-number", value="1", type="text")
