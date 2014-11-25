@@ -268,8 +268,6 @@ $(function() {
         this.viewer = null;
         // OpenSeaDragon seems to need a unique ID for each instance
         this.hash = "cudl-player-" + CudlViewerView._hash++;
-
-        this.cudlService = this.viewerModel.getCudlService();
     }
     extend(CudlViewerView, View);
 
@@ -286,11 +284,19 @@ $(function() {
         },
 
         onImageNumberChanged: function onImageNumberChanged() {
-            // Our page numbers are 1-based, the Viewer's are 0-based.
-            var number = this.viewerModel.getImageNumber() - 1;
-            if(this.viewer !== null &&
-                    this.viewer.currentPage() !== number) {
-                this.viewer.goToPage(number);
+            var number = this.viewerModel.getImageNumber();
+            var self = this;
+            if(this.viewer !== null && this.viewer.currentPage() !== number) {
+
+                this.viewerModel.getTilesource(number)
+                        .done(function(tileSource) {
+
+                    // The image number might well change as the tilesource is
+                    // loading, so only use it if it's not changed.
+                    if(self.viewerModel.getImageNumber() === number) {
+                        self.viewer.open(tileSource);
+                    }
+                });
             }
         },
 
@@ -298,18 +304,10 @@ $(function() {
             this.viewer = OpenSeadragon({
                 element: this.el,
                 hash: this.hash,
-                tileSources: this.getTileSources(),
                 prefixUrl: "/images/viewer/",
                 showNavigationControl: false,
                 showNavigator: false,
                 showSequenceControl: false
-            });
-        },
-
-        getTileSources: function getTileSources() {
-            var cudl = this.cudlService;
-            return $.map(this.metadata.getPages(), function(page) {
-                return cudl.getDziUrl(page.displayImageURL);
             });
         }
     });
@@ -540,32 +538,47 @@ $(function() {
 
             // Ensure the page number is within bounds
             var imageNumber = this.imageNumber;
-            try {
-                this.setImageNumber(this.imageNumber, true);
-            }
-            catch(e) {
+            if(!this.isValidImageNumber(imageNumber)) {
                 // Default the image number if it was invalid
                 imageNumber = 1;
             }
 
             $(this).trigger("change:metadata", metadata);
-            // Set the number again to re-trigger the change event
+            // Set the number to trigger the change event
             this.setImageNumber(imageNumber);
+        },
+
+        getTilesource: function getTilesource(imageNumber) {
+            var page = this.getMetadata().getPages()[imageNumber - 1];
+            var url = this.getCudlService().getDziUrl(page.displayImageURL);
+            return $.ajax({
+                url: url,
+                dataType: "xml"
+            }).then(function(data) {
+                var dzi = new OpenSeadragon.DziTileSource();
+                if(!dzi.supports(data)) {
+                    // Reject the returned promise
+                    return $.Deferred().reject("Unable to interpret data as a a DZI", data);
+                }
+                return dzi.configure(data, url);
+            });
         },
 
         getImageNumber: function getImageNumber() {
             return this.imageNumber;
         },
 
-        setImageNumber: function setImageNumber(image, silent) {
-            if(image < 1 || image > this.getImageCount()) {
+        isValidImageNumber: function isValidImageNumber(number) {
+            return number >= 1 && number <= this.getImageCount();
+        },
+
+        setImageNumber: function setImageNumber(image) {
+            if(!this.isValidImageNumber(image)) {
                 throw new RangeError("image out of range: " + image);
             }
             this.imageNumber = image;
 
-            if(silent !== true) {
-                $(this).trigger("change:imageNumber");
-            }
+            $(this).trigger("change:imageNumber");
         },
 
         getImageCount: function getImageCount() {
