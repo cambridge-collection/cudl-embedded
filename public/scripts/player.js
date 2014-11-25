@@ -1,6 +1,121 @@
 $(function() {
     "use scrict";
 
+    var isSameOrigin = (function() {
+        function normaliseAnchorOriginFields(anchor) {
+            // IE doesn't populate implicit fields of relative URLs
+            if(anchor.protocol === ":" || !anchor.protocol) {
+                anchor.protocol = window.location.protocol;
+            }
+            if(!anchor.hostname) {
+                anchor.hostname = window.location.hostname;
+            }
+            if(!anchor.port) {
+                anchor.port = window.location.port;
+            }
+        }
+
+        function parseUrl(url) {
+            if($.type(url) !== "string") {
+                throw new Error("Invalid url: " + url);
+            }
+
+            var anchor = document.createElement("a");
+            anchor.href = url;
+            normaliseAnchorOriginFields(anchor);
+            return anchor;
+        }
+
+        function origin(parsedUrl) {
+            return parsedUrl.protocol + "//" + parsedUrl.hostname + ":" +
+                parsedUrl.port;
+        }
+
+        /**
+         * Check if url is the same origin as base. If not specified, base is
+         * the current page's url.
+         */
+        return function isSameOrigin(url, base) {
+            if(!base) {
+                base = "" + window.location;
+            }
+
+            return origin(parseUrl(url)) === origin(parseUrl(base));
+        };
+    })();
+
+    function XDomainRequestAjaxTransport(options, jqXHR) {
+        this.options = options;
+        this.jqXHR = jqXHR;
+        this.xdr = new XDomainRequest();
+        this.completeCallback = null;
+    }
+    $.extend(XDomainRequestAjaxTransport.prototype, {
+        onLoad: function onLoad() {
+            this.completeCallback(
+                200, "success", this.getResponses());
+        },
+
+        onError: function onError(message) {
+            this.completeCallback(0, message, this.getResponses());
+        },
+
+        getResponses: function getResponses() {
+            return {text: this.xdr.responseText};
+        },
+
+        send: function send(headers, completeCallback) {
+            this.completeCallback = completeCallback;
+
+            this.xdr.onload = $.proxy(this.onLoad, this);
+            this.xdr.onerror = $.proxy(this.onError, this, "error");
+            this.xdr.ontimeout = $.proxy(this.onError, this, "timeout");
+
+            this.xdr.open(this.options.type, this.options.url);
+            this.xdr.send(this.options.data);
+        },
+        abort: function abort() {
+            this.xdr.abort();
+        }
+    });
+    $.extend(XDomainRequestAjaxTransport, {
+        canHandle: function canHandle(options) {
+            // Handle cross origin requests if the browser does not support
+            // CORS and XDomainRequest exists (e.g. IE 8 and 9)
+            if(isSameOrigin(options.url) || Modernizr.cors ||
+                    !window.XDomainRequest) {
+                return false;
+            }
+
+            // Also, XDomainRequest only supports get and post
+            if(!(options.type === "GET" || options.type === "POST")) {
+                return false;
+            }
+
+            // And it has to be async
+            if(!options.async) {
+                return false;
+            }
+
+            return true;
+        },
+
+        handler: function handler(options, originalOptions, jqXHR) {
+            if(XDomainRequestAjaxTransport.canHandle(options)) {
+                return new XDomainRequestAjaxTransport(options, jqXHR);
+            }
+        },
+
+        registerTransport: function registerTransport() {
+            // +* prepends our handler to the chain for the * (wildcard)
+            // datatype.
+            $.ajaxTransport("+*", XDomainRequestAjaxTransport.handler);
+        }
+    });
+
+    // Add XDomainRequest support to jquery.ajax as an ajax transport method.
+    XDomainRequestAjaxTransport.registerTransport();
+
     function parseUriQuery(query) {
         var parts = /\??(.*)/.exec(query)[1].split("&");
         var pairs = $.map(parts, function(part) {
