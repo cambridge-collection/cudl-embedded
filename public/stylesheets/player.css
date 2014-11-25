@@ -106,6 +106,14 @@ a {
 	color: #8FB2E8;
 }
 
+i {
+	font-style: italic;
+}
+
+br {
+	display: block;
+}
+
 .videoCaption {
 	position: relative;
 	width: 100%;
