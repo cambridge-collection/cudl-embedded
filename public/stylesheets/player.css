@@ -351,9 +351,11 @@ br {
 	border-radius: 0 0 3px 3px;
 	border-top: none;
 	padding: 0px 5px;
-	transform: translateX(-31px) rotate(90deg);
+	-ms-transform: translate(-31px) rotate(90deg);
+	transform: translate(-31px) rotate(90deg);
 	box-shadow: 4px 0px 5px 0 rgba(0, 0, 0, 0.35);
 	z-index: 1;
+	min-height: 22px;
 }
 .cudl-metadata-toggle-btn:before {
 	content: "Hide";
