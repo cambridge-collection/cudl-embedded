@@ -188,6 +188,8 @@ $(function() {
 
         onImageNumberEdited: function onImageNumberEdited() {
             this._tryToSetImageNumber(parseInt(this.$imgCurrent.val(), 10));
+            // Overwrite any bad input
+            this.onImageNumberChanged();
         },
 
         incrementImageNumber: function incrementImageNumber(count) {
@@ -286,7 +288,7 @@ $(function() {
         onImageNumberChanged: function onImageNumberChanged() {
             var number = this.viewerModel.getImageNumber();
             var self = this;
-            if(this.viewer !== null && this.viewer.currentPage() !== number) {
+            if(this.viewer !== null) {
 
                 this.viewerModel.getTilesource(number)
                         .done(function(tileSource) {
@@ -535,7 +537,6 @@ $(function() {
         onMetadataAvailable: function onMetadataAvailable(metadata) {
             this.metadata = metadata;
 
-
             // Ensure the page number is within bounds
             var imageNumber = this.imageNumber;
             if(!this.isValidImageNumber(imageNumber)) {
@@ -545,7 +546,7 @@ $(function() {
 
             $(this).trigger("change:metadata", metadata);
             // Set the number to trigger the change event
-            this.setImageNumber(imageNumber);
+            this.setImageNumber(imageNumber, true);
         },
 
         getTilesource: function getTilesource(imageNumber) {
@@ -572,13 +573,17 @@ $(function() {
             return number >= 1 && number <= this.getImageCount();
         },
 
-        setImageNumber: function setImageNumber(image) {
+        setImageNumber: function setImageNumber(image, forceTrigger) {
             if(!this.isValidImageNumber(image)) {
                 throw new RangeError("image out of range: " + image);
             }
+
+            var changed = image !== this.imageNumber;
             this.imageNumber = image;
 
-            $(this).trigger("change:imageNumber");
+            if(changed || forceTrigger) {
+                $(this).trigger("change:imageNumber");
+            }
         },
 
         getImageCount: function getImageCount() {
