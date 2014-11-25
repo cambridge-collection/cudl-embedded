@@ -163,6 +163,9 @@ br {
 	width: 100%;
 
 	border-bottom: 1px solid #535353;
+	/* ie9 doesn't know about gradients, so set a colour first which it
+	   will use instead.*/
+	background: rgba(0, 0, 0, 0.88);
 	background:
 		linear-gradient(
 			to top,
