@@ -274,13 +274,6 @@ br {
 	bottom: 0;
 	width: 320px;
 
-	transition: right 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.cudl-viewer-metadata.hidden {
-	right: -304px;
-}
-
-.cudl-viewer-metadata-container {
 	background-color: rgba(0, 0, 0, 0.88);
 	border-left: 1px solid #535353;
 	background: linear-gradient(
@@ -289,6 +282,24 @@ br {
 			rgba(255, 255, 255, 0) 10px),
 	rgba(0, 0, 0, 0.88);
 	box-shadow: -4px 0px 5px 0 rgba(0, 0, 0, 0.35);
+
+	transition: right 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.cudl-viewer-metadata.hidden {
+	right: -304px;
+}
+
+.hidden .cudl-viewer-metadata-container {
+	/* hide the content when the sidebar is shifted off screen to avoid
+	   focusing it w/ tab etc. */
+	visibility: hidden;
+}
+
+.cudl-viewer-metadata-container {
+	/* Transition visibility over the same time as the sidebar is animated
+	   so that it becomes hidden once it's slid off the screen. Otherwise
+	   it becomes hidden as soon as it starts to slide away. */
+	transition: visibility 0.8s;
 
 	padding: 0 18px 18px 18px;
 	-webkit-overflow-scrolling: touch;
