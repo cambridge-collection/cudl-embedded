@@ -327,6 +327,7 @@ br {
 	left: 10px;
 	bottom: 10px;
 	opacity: 0.5;
+	transition: opacity 0.3s ease;
 }
 .cudl-viewer-buttons:hover {
 	opacity: 1;
@@ -343,6 +344,7 @@ br {
 	width: 24px;
 	height: 24px;
 	box-shadow: 0px 4px 5px 0 rgba(0, 0, 0, 0.35);
+	text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.35);
 	cursor: pointer;
 
 	padding: 4px 5px;
@@ -354,13 +356,16 @@ br {
 	-ms-user-select: none;
 }
 .cudl-btn:focus {
-
+	outline: none;
+	box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35),
+				0 0 5px 2px rgba(72, 147, 232, 0.5);
+	border: 1px solid #61a8f1;
 }
 .cudl-btn:hover {
-
+	border: 1px solid #5fb8ff;
 }
 .cudl-btn:active {
-	background: #d09d02;
+	background: #314d93;
 }
 
 .cudl-metadata-toggle-btn {
@@ -393,14 +398,12 @@ br {
 .hidden .cudl-metadata-toggle-btn:before {
 	content: "Show";
 }
-/*
-#metadata {
-	height: 100%;
-	margin: 0 5px 0 20px;
-	-webkit-overflow-scrolling: touch;
-  	overflow-y: auto;
-  	padding-right: 59px;
-  	position: absolute;
-  	top: 0;
+.cudl-metadata-toggle-btn:focus {
+	border-top: none;
+	box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35), /* Inner shadow */
+				0 0 5px 2px rgba(72, 147, 232, 0.5), /* Outer blue glow indicating focus */
+				4px 0px 5px 0 rgba(0, 0, 0, 0.35);   /* Outer black drop shadow */
 }
-*/
+.cudl-metadata-toggle-btn:hover {
+	border-top: none;
+}
