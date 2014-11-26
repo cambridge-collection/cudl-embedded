@@ -348,8 +348,6 @@ br {
 	background: rgba(41, 41, 41, 0.8);
 	border-radius: 4px;
 	color: white;
-	width: 24px;
-	height: 24px;
 	box-shadow: 0px 4px 5px 0 rgba(0, 0, 0, 0.35);
 	text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.35);
 	cursor: pointer;
@@ -413,4 +411,19 @@ br {
 }
 .cudl-metadata-toggle-btn:hover {
 	border-top: none;
+}
+
+.cudl-btn-fullscreen {
+	transition: width 1.3s ease;
+	float: right;
+	z-index: 4;
+	position: relative;
+	margin: 3px 6px 0 0;
+}
+.cudl-btn-fullscreen .cudl-exit-fullscreen {
+	display: none;
+	padding-left: 4px;
+}
+.cudl-fullscreen .cudl-btn-fullscreen .cudl-exit-fullscreen {
+	display: inline;
 }

@@ -157,6 +157,85 @@ $(function() {
     }
 
 
+    var CudlFullscreenView = extend(function CudlFullscreenView(options) {
+        CudlFullscreenView.super.call(this, options);
+
+        this.$el.on("click", $.proxy(this.onFullscreenClicked, this));
+        this.fullscreenElement = $("body")[0];
+        $(document).on("webkitfullscreenchange mozfullscreenchange " +
+            "fullscreenchange MSFullscreenChange",
+            $.proxy(this.onFullscreenChange, this));
+
+        // bootstrap initial state
+        this.onFullscreenChange();
+    }, View);
+    $.extend(CudlFullscreenView.prototype, {
+        onFullscreenClicked: function onFullscreenClicked() {
+            if (this.isFullscreen()) {
+                this.exitFullscreen();
+            }
+            else {
+                this.enterFullscreen();
+            }
+        },
+
+        getFirstMethod: function getFirstMethod(obj, methods, _default) {
+            for(i in methods) {
+                var method = obj[methods[i]];
+                if($.isFunction(method)) {
+                    return method;
+                }
+            }
+            return _default;
+        },
+
+        enterFullscreenMethods: [
+            "requestFullscreen",
+            "msRequestFullscreen",
+            "mozRequestFullScreen",
+            "webkitRequestFullscreen"
+        ],
+
+        exitFullscreenMethods: [
+            "exitFullscreen",
+            "msExitFullscreen",
+            "mozCancelFullScreen",
+            "webkitExitFullscreen"
+        ],
+
+        getCurrentFullscreenElement: function getCurrentFullscreenElement() {
+            return document.fullscreenElement ||
+                document.mozFullScreenElement ||
+                document.webkitFullscreenElement ||
+                document.msFullscreenElement;
+        },
+
+        enterFullscreen: function enterFullscreen() {
+            var method = this.getFirstMethod(
+                this.fullscreenElement, this.enterFullscreenMethods, $.noop);
+            method.call(this.fullscreenElement);
+        },
+
+        exitFullscreen: function exitFullscreen() {
+            var method = this.getFirstMethod(
+                document, this.exitFullscreenMethods, $.noop);
+            method.call(document);
+        },
+
+        isFullscreen: function isFullscreen() {
+            return this.getCurrentFullscreenElement() ===
+                this.fullscreenElement;
+        },
+
+        onFullscreenChange: function onFullscreenChange() {
+            var fullscreen = this.isFullscreen();
+            this.$el.toggleClass("cudl-fullscreen fa-arrows-alt", !fullscreen);
+            this.$el.toggleClass("fa-close", fullscreen);
+            $("html").toggleClass("cudl-fullscreen", fullscreen);
+        }
+    });
+
+
     var CudlImageNumberView = extend(function CudlImageNumberView(options) {
         CudlImageNumberView.super.call(this, options);
 
@@ -648,4 +727,8 @@ $(function() {
         el: $(".cudl-viewer-buttons")[0],
         viewerView: viewerView
     });
+
+    var fullscreenView = new CudlFullscreenView({
+        el: $(".cudl-btn-fullscreen")[0]
+    })
 });
