@@ -427,3 +427,25 @@ br {
 .cudl-fullscreen .cudl-btn-fullscreen .cudl-exit-fullscreen {
 	display: inline;
 }
+
+/* Narrow layout */
+@media (max-width: 459px) {
+
+	.cudl-viewer header {
+		height: 64px;
+	}
+
+	.cudl-page-position {
+		top: 32px;
+	}
+
+	.cudl-btn-img-next {
+		float: right;
+	}
+	.cudl-btn-img-prev {
+		float: left;
+	}
+
+
+
+}
