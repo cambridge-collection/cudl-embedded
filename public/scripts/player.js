@@ -403,7 +403,7 @@ $(function() {
         },
 
         render: function render() {
-            this.$el.find(".cudl-viewer-metadata-container")
+            this.$el.find(".cudl-viewer-metadata-content")
                 .empty().append(this.renderTemplate());
         },
 
