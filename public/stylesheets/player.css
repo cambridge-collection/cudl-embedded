@@ -278,6 +278,9 @@ br {
 }
 .cudl-viewer-metadata.hidden {
 	/* Slide the sidebar off screen. */
+	-ms-transform: translate(304px, 0px);
+	-webkit-transform: translate(304px, 0px);
+	-moz-transform: translate(304px, 0px);
 	transform: translate(304px, 0px);
 }
 
