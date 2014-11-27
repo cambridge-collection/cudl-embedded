@@ -76,7 +76,7 @@ html {
 }
 
 
-html, button, input[type=text] {
+html, button, input[type=text], .fa > * {
 	font-family: CharisSILW, Georgia, 'Times New Roman', serif;
 	color: #e5e5e5;
 }
