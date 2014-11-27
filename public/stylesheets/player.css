@@ -182,11 +182,8 @@ br {
 }
 
 .cudl-ucam-logo {
-	background: url("/images/player/cam-logo-header.png") no-repeat;
-	width: 100px;
-	height: 24px;
 	display: inline-block;
-	margin: 5px 0 0 6px;
+	margin: 4px 0 4px 6px;
 
 	position: relative;
 	z-index: 4;
@@ -260,9 +257,6 @@ br {
 	margin-left: 3px;
 	text-align: left;
 }
-
-
-
 
 .cudl-viewer-content {
 	height: 100%;

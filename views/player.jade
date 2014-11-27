@@ -2,6 +2,7 @@ doctype html
 html
 	head
 		title Embeded Viewer - Cambridge University Digital Library
+		meta(name="viewport", content="initial-scale=1")
 		link(rel='stylesheet', href='/stylesheets/player.css')
 		link(rel='stylesheet', href='/lib/font-awesome/css/font-awesome.css')
 		script(type='text/javascript' src="/lib/modernizr.custom.js")
@@ -20,6 +21,9 @@ html
 	body.cudl-viewer
 			header
 				a.cudl-ucam-logo(href="https://cam.ac.uk/", target="_blank", title="University of Cambridge")
+					img(src="/images/player/cam-uni-1x.png",
+						srcset="/images/player/cam-uni-1x.png 1x, /images/player/cam-uni-2x.png 2x, /images/player/cam-uni-3x.png 3x",
+						alt="University of Cambridge logo")
 				.cudl-page-position
 					button.cudl-btn.cudl-btn-img-prev.fa.fa-arrow-left(accesskey="j", title="Go to the previous image")
 					input.cudl-img-number.cudl-img-current(name="img-number", value="—", type="text", accesskey="l", title="Current image")
