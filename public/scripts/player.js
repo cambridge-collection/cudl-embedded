@@ -163,7 +163,6 @@ $(function() {
         this.$el.on("click", $.proxy(this.onFullscreenClicked, this));
         this.fullscreenElement = $("body")[0];
 
-
         if(this.isFullscreenPossible()) {
             $(document).on("webkitfullscreenchange mozfullscreenchange " +
                 "fullscreenchange MSFullscreenChange",
@@ -477,9 +476,22 @@ $(function() {
             $el.find(".cudl-metadata-title a").text(md.getTitle());
             $el.find(".cudl-metadata-title a").attr("href", this.viewerModel.getItemCudlUrl());
             $el.find(".cudl-metadata-authors").append(this.renderAuthors());
-            $el.find(".cudl-metadata-abstract").html(md.getAbstract());
+            $el.find(".cudl-metadata-abstract").html(
+                this.autoSizeEmbededObjects(md.getAbstract()));
 
             return $el.children();
+        },
+
+        /**
+         * Wrap object/iframe elements under el to allow them to be sized
+         * automatically to the width of the sidebar.
+         * @param el The element containing object/iframe elements.
+         */
+        autoSizeEmbededObjects: function(el) {
+            return $(el)
+                .find("iframe,object")
+                .wrap("<div class=\"cudl-embedded-object-wrapper\"></div>")
+                .end();
         },
 
         renderAuthors: function renderAuthors() {

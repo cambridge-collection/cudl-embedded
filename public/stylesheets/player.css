@@ -114,18 +114,21 @@ br {
 	display: block;
 }
 
-.videoCaption {
+.cudl-embedded-object-wrapper {
 	position: relative;
 	width: 100%;
 	padding-bottom: 56.25%;
 }
-.videoCaption object,
-.videoCaption embed {
+.cudl-embedded-object-wrapper object,
+.cudl-embedded-object-wrapper embed {
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
+}
+.videoCaption {
+	text-align: center;
 }
 
 .cudl-metadata-title a {
