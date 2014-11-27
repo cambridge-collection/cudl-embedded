@@ -271,14 +271,8 @@ br {
 	bottom: 0;
 	width: 320px;
 
+	/* Animate the transform which hides the metadata */
 	transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.cudl-viewer-metadata.hidden {
-	/* Slide the sidebar off screen. */
-	-ms-transform: translate(304px, 0px);
-	-webkit-transform: translate(304px, 0px);
-	-moz-transform: translate(304px, 0px);
-	transform: translate(304px, 0px);
 }
 
 .cudl-viewer-metadata-container {
@@ -290,13 +284,8 @@ br {
 	width: 100%;
 
 	background-color: rgba(0, 0, 0, 0.88);
-	border-left: 1px solid #535353;
-	background: linear-gradient(
-			to right,
-			rgba(255, 255, 255, 0.08) 0%,
-			rgba(255, 255, 255, 0) 10px),
-	rgba(0, 0, 0, 0.88);
-	box-shadow: -4px 0px 5px 0 rgba(0, 0, 0, 0.35);
+	border-style: solid;
+	border-color: #535353;
 }
 
 
@@ -375,42 +364,18 @@ br {
 
 .cudl-metadata-toggle-btn {
 	position: absolute;
-	top: 150px;
-	left: 0;
+	z-index: 1;
+
 	height: auto;
 	width: auto;
 
-	border-radius: 0 0 3px 3px;
-	border-top: none;
 	padding: 5px 8px;
-
-	-ms-transform: rotate(90deg);
-	transform: rotate(90deg);
-
-	-moz-transform-origin: 0 0;
-	-ms-transform-origin: 0 0;
-	-o-transform-origin: 0 0;
-	-webkit-transform-origin: 0 0;
-	transform-origin: 0 0;
-
-	box-shadow: 4px 0px 5px 0 rgba(0, 0, 0, 0.35);
-	z-index: 1;
-
 }
 .cudl-metadata-toggle-btn:before {
 	content: "Hide";
 }
 .hidden .cudl-metadata-toggle-btn:before {
 	content: "Show";
-}
-.cudl-metadata-toggle-btn:focus {
-	border-top: none;
-	box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35), /* Inner shadow */
-				0 0 5px 2px rgba(72, 147, 232, 0.5), /* Outer blue glow indicating focus */
-				4px 0px 5px 0 rgba(0, 0, 0, 0.35);   /* Outer black drop shadow */
-}
-.cudl-metadata-toggle-btn:hover {
-	border-top: none;
 }
 
 .cudl-btn-fullscreen {
@@ -426,6 +391,58 @@ br {
 }
 .cudl-fullscreen .cudl-btn-fullscreen .cudl-exit-fullscreen {
 	display: inline;
+}
+
+/* Wide/normal layout */
+@media (min-width: 460px) {
+
+	.cudl-viewer-metadata-container {
+		border-left-width: 1px;
+
+		background: linear-gradient(
+				to right,
+				rgba(255, 255, 255, 0.08) 0%,
+				rgba(255, 255, 255, 0) 10px),
+		rgba(0, 0, 0, 0.88);
+		box-shadow: -4px 0px 5px 0 rgba(0, 0, 0, 0.35);
+	}
+
+	.cudl-viewer-metadata.hidden {
+		/* Slide the sidebar off screen. */
+		-ms-transform: translate(304px, 0px);
+		-webkit-transform: translate(304px, 0px);
+		-moz-transform: translate(304px, 0px);
+		transform: translate(304px, 0px);
+	}
+
+	.cudl-metadata-toggle-btn {
+		top: 150px;
+		left: 0;
+
+		border-radius: 0 0 3px 3px;
+		border-top: none;
+
+		-ms-transform: rotate(90deg);
+		transform: rotate(90deg);
+
+		-moz-transform-origin: 0 0;
+		-ms-transform-origin: 0 0;
+		-o-transform-origin: 0 0;
+		-webkit-transform-origin: 0 0;
+		transform-origin: 0 0;
+
+		box-shadow: 4px 0px 5px 0 rgba(0, 0, 0, 0.35);
+	}
+	.cudl-metadata-toggle-btn:focus {
+		border-top: none;
+		box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35), /* Inner shadow */
+		0 0 5px 2px rgba(72, 147, 232, 0.5), /* Outer blue glow indicating focus */
+		4px 0px 5px 0 rgba(0, 0, 0, 0.35);   /* Outer black drop shadow */
+	}
+	.cudl-metadata-toggle-btn:hover {
+		border-top: none;
+	}
+
 }
 
 /* Narrow layout */
@@ -446,6 +463,102 @@ br {
 		float: left;
 	}
 
+	.cudl-viewer-metadata {
+		width: 100%;
+		top: 35%;
+	}
+
+	.cudl-viewer-metadata-container {
+		border-top-width: 1px;
+
+		background: linear-gradient(
+				to bottom,
+				rgba(255, 255, 255, 0.08) 0%,
+				rgba(255, 255, 255, 0) 10px),
+				rgba(0, 0, 0, 0.88);
+		box-shadow: 0 -4px 5px 0 rgba(0, 0, 0, 0.35);
+	}
+
+	.cudl-viewer-metadata.hidden {
+		/* Slide the sidebar off screen. */
+		-ms-transform: translate(0, 100%) translate(0, -10px);
+		-webkit-transform: translate(0, 100%) translate(0, -10px);
+		-moz-transform: translate(0, 100%) translate(0, -10px);
+		transform: translate(0, 100%) translate(0, -10px);
+	}
+
+	.hidden .cudl-viewer-metadata-content {
+		overflow-y: hidden;
+	}
+
+	.cudl-metadata-toggle-btn {
+		bottom: 100%;
+		right: 25%;
+
+		border-radius: 3px 3px 0px 0px;
+		border-bottom: none;
+		padding: 5px 8px;
+
+		box-shadow: 0px -4px 5px 0 rgba(0, 0, 0, 0.35);
+		z-index: 1;
+
+	}
+	.cudl-metadata-toggle-btn:focus {
+		border-bottom: none;
+		box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35), /* Inner shadow */
+					0 0 5px 2px rgba(72, 147, 232, 0.5), /* Outer blue glow indicating focus */
+					0px -4px 5px 0 rgba(0, 0, 0, 0.35);   /* Outer black drop shadow */
+	}
+	.cudl-metadata-toggle-btn:hover {
+		border-bottom: none;
+	}
+
+	.cudl-viewer-buttons {
+		top: 74px;
+		left: 2px;
+		width: 34px;
+	}
 
 
+	/* Add some space above the metadata scroll area so that it doesn't cut
+	   off right under the border when scrolled down. */
+	.cudl-viewer-metadata-container {
+		padding-top: 18px;
+	}
+	/* Reduce the spacing of the first metadata element now that we've
+	   created extra space above it. */
+	.cudl-viewer-metadata-content > :first-child {
+		margin-top: 10px;
+	}
+	/* Drop shadow in metadata */
+	.pointerevents .cudl-viewer-metadata-container::before {
+		/* Overlay over the visible content area*/
+		content: "";
+		display: block;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+
+		/* Need to ignore pointer events so that the metadata underneath can
+		   receive clicks/scrolls etc. */
+		pointer-events: none;
+
+		/* Draw a black gradient at top and bottom to simulate a shadow. */
+		background:
+			linear-gradient(
+				to bottom,
+				rgba(0, 0, 0, 0) 18px,
+				rgba(0, 0, 0, 0.5) 18px,
+				rgba(0, 0, 0, 0) 28px),
+			linear-gradient(
+				to top,
+				rgba(0, 0, 0, 0.5) 0%,
+				rgba(0, 0, 0, 0) 10px);
+
+		/* Raise above any embedded objects in the metadata. */
+		z-index: 1;
+		/* Fixme: opacity; */
+	}
 }
