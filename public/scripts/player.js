@@ -162,12 +162,21 @@ $(function() {
 
         this.$el.on("click", $.proxy(this.onFullscreenClicked, this));
         this.fullscreenElement = $("body")[0];
-        $(document).on("webkitfullscreenchange mozfullscreenchange " +
-            "fullscreenchange MSFullscreenChange",
-            $.proxy(this.onFullscreenChange, this));
 
-        // bootstrap initial state
-        this.onFullscreenChange();
+
+        if(this.isFullscreenPossible()) {
+            $(document).on("webkitfullscreenchange mozfullscreenchange " +
+                "fullscreenchange MSFullscreenChange",
+                $.proxy(this.onFullscreenChange, this));
+
+            // bootstrap initial state
+            this.onFullscreenChange();
+            this.$el.show();
+        }
+        else {
+            // Disable the fullscreen button as it's not going to work
+            this.$el.hide();
+        }
     }, View);
     $.extend(CudlFullscreenView.prototype, {
         onFullscreenClicked: function onFullscreenClicked() {
@@ -202,6 +211,13 @@ $(function() {
             "mozCancelFullScreen",
             "webkitExitFullscreen"
         ],
+
+        isFullscreenPossible: function isFullscreenPossible() {
+            return document.fullscreenEnabled ||
+                document.msFullscreenEnabled ||
+                document.mozFullScreenEnabled ||
+                document.webkitFullscreenEnabled;
+        },
 
         getCurrentFullscreenElement: function getCurrentFullscreenElement() {
             return document.fullscreenElement ||
