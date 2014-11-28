@@ -478,6 +478,8 @@ $(function() {
             $el.find(".cudl-metadata-authors").append(this.renderAuthors());
             $el.find(".cudl-metadata-abstract").html(
                 this.autoSizeEmbededObjects(md.getAbstract()));
+            $el.find(".cudl-copyright-statement")
+                .text(md.getImageCopyrightStatement());
 
             return $el.children();
         },
@@ -642,6 +644,10 @@ $(function() {
         getAbstract: function getAbstract() {
             var abstract = this.getPrimaryDescription().abstract;
             return (abstract && abstract.displayForm) || "";
+        },
+
+        getImageCopyrightStatement: function getImageCopyrightStatement() {
+            return this.getPrimaryDescription().displayImageRights || "";
         }
     });
 
