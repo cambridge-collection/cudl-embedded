@@ -156,6 +156,13 @@ $(function() {
         this.$el = $(this.el);
     }
 
+    function registerListeners(object, listeners) {
+        var $obj = $(object);
+        for(var event in listeners) {
+            $obj.on(event, listeners[event]);
+        }
+    }
+
 
     var CudlFullscreenView = extend(function CudlFullscreenView(options) {
         CudlFullscreenView.super.call(this, options);
@@ -565,13 +572,16 @@ $(function() {
         /**
          * Get a promise containing the player's item's JSON metadata.
          */
-        getJsonMetadata: function getJsonMetadata(id) {
+        getJsonMetadata: function getJsonMetadata(id, jqxhrOut) {
+            jqxhrOut = jqxhrOut || [];
             var url = this.getMetadataUrl(id);
 
-            return $.ajax({
+            var jqxhr = $.ajax({
                 url: url,
                 dataType: "json"
-            }).then(
+            });
+            jqxhrOut.push(jqxhr);
+            return jqxhr.then(
                 function(data, textStatus, xhr) {
                     return data;
                 },
@@ -583,8 +593,8 @@ $(function() {
             );
         },
 
-        getMetadata: function getMetadata(id) {
-            return this.getJsonMetadata(id)
+        getMetadata: function getMetadata(id, jqxhrOut) {
+            return this.getJsonMetadata(id, jqxhrOut)
                 .then($.proxy(this.metadataFromJson, this));
         },
 
@@ -654,9 +664,19 @@ $(function() {
     function CudlViewerModel(options) {
         options = $.extend({}, CudlViewerModel.DEFAULT_OPTIONS, options);
 
+        // Register listeners before events are triggered by this constructor
+        if(options.listeners) {
+            registerListeners(this, options.listeners);
+        }
+
         this.cudlService = options.cudlService;
         this.metadata = null;
         this.imageNumber = options.imageNumber;
+
+        this.metadataJqxhr = null;
+        this.tilesourceJqxhr = null;
+
+        this.loadingCount = 0;
 
         this.setItemId(options.itemId);
     }
@@ -681,9 +701,45 @@ $(function() {
         },
 
         _loadMetadata: function _loadMetadata() {
-            var futureMetadata = this.cudlService.getMetadata(this.itemId);
+            this.bumpLoadingCount(1);
+            var self = this;
+            var jqxhr = this.metadataJqxhr;
+            if(jqxhr !== null) {
+                jqxhr.abort();
+                console.assert(this.metadataJqxhr === null);
+            }
+
+            // Obtain a reference to the jqxhr backing the metadata promise so
+            // that we can abort it if required.
+            var jqxhrOut = [];
+            var futureMetadata = this.cudlService.getMetadata(this.itemId, jqxhrOut);
             futureMetadata.done(
                 $.proxy(this.onMetadataAvailable, this, this.itemId));
+
+            this.metadataJqxhr = jqxhr = jqxhrOut[0];
+            jqxhr.always(function() {
+                self.metadataJqxhr = null;
+                self.bumpLoadingCount(-1);
+            });
+
+        },
+
+        bumpLoadingCount: function bumpLoadingCount(amount) {
+            var oldCount = this.loadingCount;
+
+            if(oldCount + amount < 0) {
+                throw new Error("negative loading count");
+            }
+
+            this.loadingCount = oldCount + amount;
+            if((!oldCount && this.loadingCount) ||
+                (oldCount && !this.loadingCount)) {
+                $(this).trigger("change:loading");
+            }
+        },
+
+        isLoading: function isLoading() {
+            return !!this.loadingCount;
         },
 
         onMetadataAvailable: function onMetadataAvailable(itemId, metadata) {
@@ -708,12 +764,27 @@ $(function() {
         },
 
         getTilesource: function getTilesource(imageNumber) {
+            this.bumpLoadingCount(1);
+            var self = this;
+            var jqxhr = this.tilesourceJqxhr;
+            if(jqxhr !== null) {
+                jqxhr.abort();
+                console.assert(this.tilesourceJqxhr === null);
+            }
+
             var page = this.getMetadata().getPages()[imageNumber - 1];
             var url = this.getCudlService().getDziUrl(page.displayImageURL);
-            return $.ajax({
+            this.tilesourceJqxhr = jqxhr = $.ajax({
                 url: url,
                 dataType: "xml"
-            }).then(function(data) {
+            });
+
+            jqxhr.always(function() {
+                self.tilesourceJqxhr = null;
+                self.bumpLoadingCount(-1);
+            })
+
+            return jqxhr.then(function(data) {
                 var dzi = new OpenSeadragon.DziTileSource();
                 if(!dzi.supports(data)) {
                     // Reject the returned promise
@@ -771,6 +842,13 @@ $(function() {
         return parseInt(parseUriQuery(window.location.hash).page, 10) || 1;
     }
 
+    /* Show the loading indicator when we're making an requests. Note that
+       this doesn't know about openseadragon's image loading. */
+    function onLoadingChange(e) {
+        var cudlViewerModel = this;
+        $(document.body).toggleClass("loading", cudlViewerModel.isLoading());
+    }
+
     var cudlService = new CudlService({
         metadataUrlPrefix: "/v1/metadata/json/",
         metadataUrlSuffix: "",
@@ -780,7 +858,10 @@ $(function() {
     var cudlViewerModel = new CudlViewerModel({
         itemId: getItemId(),
         cudlService: cudlService,
-        imageNumber: getPage()
+        imageNumber: getPage(),
+        listeners: {
+            "change:loading": onLoadingChange
+        }
     });
 
     var viewerView = new CudlViewerView({
