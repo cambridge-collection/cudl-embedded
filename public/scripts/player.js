@@ -117,7 +117,7 @@ $(function() {
     XDomainRequestAjaxTransport.registerTransport();
 
     function parseUriQuery(query) {
-        var parts = /\??(.*)/.exec(query)[1].split("&");
+        var parts = /(?:\?|#)?(.*)/.exec(query)[1].split("&");
         var pairs = $.map(parts, function(part) {
             var index = part.indexOf("=");
             if(index >= 0) {
@@ -364,6 +364,7 @@ $(function() {
         this.viewer = null;
         // OpenSeaDragon seems to need a unique ID for each instance
         this.hash = "cudl-player-" + CudlViewerView._hash++;
+        this.createViewer();
     }
     extend(CudlViewerView, View);
 
@@ -372,7 +373,6 @@ $(function() {
     $.extend(CudlViewerView.prototype, {
         onMetadataAvailable: function onMetadataAvailable() {
             this.metadata = this.viewerModel.getMetadata();
-            this.createViewer();
         },
 
         getViewer: function getViewer() {
@@ -631,9 +631,8 @@ $(function() {
         this.cudlService = options.cudlService;
         this.metadata = null;
         this.imageNumber = options.imageNumber;
-        this.itemId = options.itemId;
 
-        options.metadata.done($.proxy(this.onMetadataAvailable, this));
+        this.setItemId(options.itemId);
     }
     CudlViewerModel.DEFAULT_OPTIONS = {
         cudlService: new CudlService(),
@@ -641,7 +640,33 @@ $(function() {
         imageNumber: 1
     };
     $.extend(CudlViewerModel.prototype, {
-        onMetadataAvailable: function onMetadataAvailable(metadata) {
+
+        setItemId: function setItemId(id) {
+            if(!$.type(id) === "string") {
+                throw new Error("id must be a string, got: " + id);
+            }
+            if(this.itemId === id) {
+                return;
+            }
+
+            this.itemId = id;
+            this._loadMetadata();
+            $(this).trigger("change:itemId");
+        },
+
+        _loadMetadata: function _loadMetadata() {
+            var futureMetadata = this.cudlService.getMetadata(this.itemId);
+            futureMetadata.done(
+                $.proxy(this.onMetadataAvailable, this, this.itemId));
+        },
+
+        onMetadataAvailable: function onMetadataAvailable(itemId, metadata) {
+            // Check that we've received the metadata corresponding to the
+            // current itemId
+            if(itemId !== this.itemId) {
+                return;
+            }
+
             this.metadata = metadata;
 
             // Ensure the page number is within bounds
@@ -712,12 +737,12 @@ $(function() {
     });
 
     function getItemId() {
-        return parseUriQuery(window.location.search).item ||
+        return parseUriQuery(window.location.hash).item ||
             "PR-01890-00011-00067"; // The book of bosh!
     }
 
-    function getStartPage() {
-        return parseInt(parseUriQuery(window.location.search).page, 10) || 1;
+    function getPage() {
+        return parseInt(parseUriQuery(window.location.hash).page, 10) || 1;
     }
 
     var cudlService = new CudlService({
@@ -726,14 +751,10 @@ $(function() {
         dziUrlPrefix: "http://cudl.lib.cam.ac.uk"
     });
 
-    var itemId = getItemId();
-    var futureMetadata = cudlService.getMetadata(itemId);
-
     var cudlViewerModel = new CudlViewerModel({
-        itemId: itemId,
+        itemId: getItemId(),
         cudlService: cudlService,
-        metadata: futureMetadata,
-        imageNumber: getStartPage()
+        imageNumber: getPage()
     });
 
     var viewerView = new CudlViewerView({
@@ -758,5 +779,11 @@ $(function() {
 
     var fullscreenView = new CudlFullscreenView({
         el: $(".cudl-btn-fullscreen")[0]
-    })
+    });
+
+    // Update the item/page when the hash changes
+    $(window).on("hashchange", function() {
+        cudlViewerModel.setItemId(getItemId());
+        cudlViewerModel.setImageNumber(getPage());
+    });
 });
