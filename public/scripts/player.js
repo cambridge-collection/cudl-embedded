@@ -520,6 +520,26 @@ $(function() {
         }
     });
 
+    var CudlPageTitleView = extend(function CudlPageTitleView(options) {
+        CudlPageTitleView.super.call(this, options);
+
+        this.viewerModel = options.viewerModel;
+
+        $(this.viewerModel)
+            .on("change:metadata", $.proxy(this.render, this));
+    }, View);
+    $.extend(CudlPageTitleView.prototype, {
+        render: function render() {
+            var metadata = this.viewerModel.getMetadata();
+            var itemTitle = metadata.getTitle();
+
+            this.$el.text(this.getPageTitle(itemTitle));
+        },
+
+        getPageTitle: function getPageTitle(itemTitle) {
+            return itemTitle + " - Cambridge University Digital Library Embedded Viewer"
+        }
+    });
 
     function CudlService(options) {
         options = $.extend({}, CudlService.DEFAULT_OPTIONS, options);
@@ -779,6 +799,11 @@ $(function() {
 
     var fullscreenView = new CudlFullscreenView({
         el: $(".cudl-btn-fullscreen")[0]
+    });
+
+    var pageTitleView = new CudlPageTitleView({
+        el: $("head title")[0],
+        viewerModel: cudlViewerModel
     });
 
     // Update the item/page when the hash changes
