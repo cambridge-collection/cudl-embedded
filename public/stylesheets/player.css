@@ -104,6 +104,10 @@ p, .videoCaption {
 
 a {
 	color: #8FB2E8;
+	text-decoration: inherit;
+}
+a:hover {
+	text-decoration: underline;
 }
 
 i {
@@ -132,11 +136,7 @@ br {
 }
 
 .cudl-metadata-title a {
-	text-decoration: none;
 	color: inherit;
-}
-.cudl-metadata-title a:hover {
-	text-decoration: underline;
 }
 
 
