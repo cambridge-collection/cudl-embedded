@@ -846,6 +846,24 @@ $(function() {
        this doesn't know about openseadragon's image loading. */
     function onLoadingChange(e) {
         var cudlViewerModel = this;
+
+        var body = $(document.body);
+        var loadingEl = body.children(".loading-indicator");
+        var currentlyLoading = body.hasClass("loading");
+        var nowLoading = cudlViewerModel.isLoading();
+
+        // Chrome seems to have a bug which causes the balls in the loading
+        // animation to not redraw after they're hidden and made visible.
+        // The animation is still playing, as the element's size changes in
+        // the dev tools, but the element is not redrawn. Detaching and
+        // reattaching the element to the DOM forces the animation to restart,
+        // but if you do it just before making it visible then Chrome doesn't
+        // always run our fade in transition... Detaching it as we hide it
+        // does the job.
+        if(currentlyLoading && !nowLoading) {
+            loadingEl.detach().appendTo(body);
+        }
+
         $(document.body).toggleClass("loading", cudlViewerModel.isLoading());
     }
 
