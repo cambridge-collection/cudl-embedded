@@ -153,8 +153,14 @@ $(function() {
     function View(options) {
         this.el = options.el || document.createElement("div");
         assert(this.el instanceof Element, "el must be an Element", this.el);
-        this.$el = $(this.el);
+        this.setEl(options.el);
     }
+    $.extend(View.prototype, {
+        setEl: function setEl(el) {
+            this.$el = $(el).first();
+            this.el = this.$el[0];
+        }
+    });
 
     function registerListeners(object, listeners) {
         var $obj = $(object);
@@ -163,6 +169,33 @@ $(function() {
         }
     }
 
+
+    var CudlErrorView = extend(function(options) {
+        CudlErrorView.super.call(this, options);
+
+        options = $.extend({}, CudlErrorView.DEFAULT_OPTIONS, options);
+
+        this.title = options.title;
+        this.body = options.body;
+        this.setEl($.parseHTML(options.template.text()));
+        this.render();
+        this.$el.on("click", ".cudl-btn-close", $.proxy(this.onClose, this));
+    }, View);
+    CudlErrorView.DEFAULT_OPTIONS = {
+        title: "Content could not be loaded",
+        body: "Please try again later",
+        template: $("#cudl-error-template")
+    };
+    $.extend(CudlErrorView.prototype, {
+        render: function render() {
+            this.$el.find("h2 span").text(this.title);
+            this.$el.find("p").text(this.body);
+        },
+
+        onClose: function onClose() {
+            this.$el.detach();
+        }
+    });
 
     var CudlFullscreenView = extend(function CudlFullscreenView(options) {
         CudlFullscreenView.super.call(this, options);
@@ -588,6 +621,7 @@ $(function() {
                 function(xhr, textStatus, errorThrown) {
                     console.error(
                         "Error fetching metadata from: " + url, arguments);
+                    reportError();
                     return "Unable to fetch metadata from CUDL.";
                 }
             );
@@ -791,6 +825,8 @@ $(function() {
                     return $.Deferred().reject("Unable to interpret data as a a DZI", data);
                 }
                 return dzi.configure(data, url);
+            }, function() {
+                reportError();
             });
         },
 
@@ -832,6 +868,15 @@ $(function() {
         }
 
     });
+
+    function reportError(options) {
+        options = options || {};
+        var error = new CudlErrorView({
+            title: options.title,
+            body: options.body
+        });
+        $(".errors").append(error.el);
+    }
 
     function getItemId() {
         return parseUriQuery(window.location.hash).item ||

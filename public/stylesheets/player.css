@@ -682,3 +682,47 @@ br {
 .no-cssanimations .ball-container {
 	display: none;
 }
+
+
+/* Error message */
+.errors {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 32px;
+	z-index: 5;
+	margin: 0 auto;
+
+	max-width: 100%;
+	width:230px;
+}
+
+.error {
+	margin: 22px;
+
+	background: rgba(0, 0, 0, 0.88);
+	background:
+	linear-gradient(
+			to bottom,
+			rgba(255, 255, 255, 0.08) 0%,
+			rgba(255, 255, 255, 0) 10px),
+	rgba(0, 0, 0, 0.88);
+	box-shadow: 0 2px 27px 5px rgba(205, 49, 44, 0.75);
+	border: 2px solid #f06354;
+
+	border-radius: 8px;
+
+	display: block;
+	padding: 20px;
+}
+.error *:first-child {
+	margin-top: 0;
+}
+
+.error .cudl-btn-close {
+	margin: 0 0 5px 10px;
+	float: right;
+	position: relative;
+	top: -5px;
+	right: -5px;
+}
