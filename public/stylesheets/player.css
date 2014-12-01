@@ -489,8 +489,10 @@ br {
 	}
 
 	.cudl-metadata-toggle-btn {
-		bottom: 100%;
+		top: 0;
 		right: 25%;
+		transform-origin: bottom left;
+		transform: translateY(-100%);
 
 		border-radius: 3px 3px 0px 0px;
 		border-bottom: none;
