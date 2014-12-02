@@ -904,6 +904,15 @@ $(function() {
         },
 
         setImageNumber: function setImageNumber(image, forceTrigger) {
+            // If we don't have any metadata set then we can set any image
+            // number, it'll be validated after the metadata is loaded
+            if(this.getMetadata() === null) {
+                this.imageNumber = Math.max(1, image);
+                // No need to trigger yet, it'll be done when the metadata is
+                // loaded.
+                return;
+            }
+
             if(!this.isValidImageNumber(image)) {
                 throw new RangeError("image out of range: " + image);
             }
