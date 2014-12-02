@@ -655,8 +655,6 @@ $(function() {
                     return data;
                 },
                 function(xhr, textStatus, errorThrown) {
-                    console.error(
-                        "Error fetching metadata from: " + url, arguments);
                     return {
                         xhr: xhr,
                         textStatus: textStatus,
@@ -806,6 +804,10 @@ $(function() {
         },
 
         onMetadataLoadFailed: function onMetadataLoadFailed(itemId, details) {
+            if(details.textStatus === "abort") {
+                return;
+            }
+
             var body, bodyHtml, title;
             var status = details.xhr.status;
             if(status == 404) {
@@ -817,8 +819,6 @@ $(function() {
                 body = "There may be a problem with the embed code";
             }
             reportError({title: title, bodyHtml: bodyHtml, body: body});
-
-            console.log("reporting error fetching metadata", details);
         },
 
         bumpLoadingCount: function bumpLoadingCount(amount) {
@@ -872,7 +872,6 @@ $(function() {
             var jqxhr = this.tilesourceJqxhr;
             if(jqxhr !== null) {
                 jqxhr.abort();
-                console.assert(this.tilesourceJqxhr === null);
             }
 
             var page = this.getMetadata().getPages()[imageNumber - 1];
@@ -885,7 +884,7 @@ $(function() {
             jqxhr.always(function() {
                 self.tilesourceJqxhr = null;
                 self.bumpLoadingCount(-1);
-            })
+            });
 
             return jqxhr.then(function(data) {
                 var dzi = new OpenSeadragon.DziTileSource();
@@ -894,8 +893,10 @@ $(function() {
                     return $.Deferred().reject("Unable to interpret data as a a DZI", data);
                 }
                 return dzi.configure(data, url);
-            }, function() {
-                reportError();
+            }, function(jqxhr, textStatus, errorThrown) {
+                if(textStatus !== "abort") {
+                    reportError();
+                }
             });
         },
 
