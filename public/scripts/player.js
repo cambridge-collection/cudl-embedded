@@ -545,11 +545,15 @@ $(function() {
             var md = this.metadata;
             var $el = $("<div>").html($(this.template).text());
 
+            var abstract = this.autoSizeEmbededObjects(md.getAbstract());
+            if(!abstract.length) {
+                abstract = "<em>No description available</em>";
+            }
+
             $el.find(".cudl-metadata-title a").text(md.getTitle());
             $el.find(".cudl-metadata-title a").attr("href", this.viewerModel.getItemCudlUrl());
             $el.find(".cudl-metadata-authors").append(this.renderAuthors());
-            $el.find(".cudl-metadata-abstract").html(
-                this.autoSizeEmbededObjects(md.getAbstract()));
+            $el.find(".cudl-metadata-abstract").html(abstract);
             $el.find(".cudl-copyright-statement")
                 .text(md.getImageCopyrightStatement());
 
