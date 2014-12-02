@@ -587,7 +587,6 @@ $(function() {
             return $(html).find(anchors).addBack(anchors).each(function(_, a) {
                 var $a = $(a);
                 $a.text($a.text());
-                $a.append($($.parseHTML("&nbsp;<span class='fa fa-file-o'></span>")));
                 $a.addClass("cudl-image-link");
                 $a.attr("title", "Jump to page in this item");
             }).end().end();

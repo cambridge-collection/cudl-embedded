@@ -165,6 +165,25 @@ button[disabled], input[disabled] {
 	margin: 1.5em 0;
 }
 
+.cudl-image-link {
+	position: relative;
+	font-style: italic;
+}
+.cudl-image-link:hover {
+	text-decoration: none;
+}
+.cudl-image-link:after {
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: 4px;
+	width: 100%;
+	border-bottom: 1px dotted #8FB2E8;
+}
+.cudl-image-link:hover:after {
+	border-bottom-style: solid;
+}
+
 .cudl-viewer {
 	overflow: hidden;
 	background: #000000;
