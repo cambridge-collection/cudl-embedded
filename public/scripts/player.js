@@ -564,7 +564,7 @@ $(function() {
 
             $el.find(".cudl-metadata-title a").text(md.getTitle());
             $el.find(".cudl-metadata-title a").attr("href", this.viewerModel.getItemCudlUrl());
-            $el.find(".cudl-metadata-authors").append(this.renderAuthors());
+            $el.find(".cudl-metadata-summary").append(this.renderSummary());
             $el.find(".cudl-metadata-abstract").html(abstract);
             $el.find(".cudl-copyright-statement")
                 .text(md.getImageCopyrightStatement());
@@ -639,19 +639,46 @@ $(function() {
                 .end();
         },
 
-        renderAuthors: function renderAuthors() {
+        renderSummary: function renderAuthors() {
             var authors = this.metadata.getAuthors();
             var authorElements = $.map(authors, function(author) {
                 return $("<span class=\"cudl-author\">")
                     .text(author.shortForm)[0];
             });
 
+            var summaryHtml;
             if(!authorElements.length) {
-                return $();
+                summaryHtml = $();
+            }
+            else {
+                summaryHtml = $([document.createTextNode("by ")])
+                    .add(commaAndJoin(authorElements, {html: true}));
             }
 
-            return $([document.createTextNode("by ")])
-                .add(commaAndJoin(authorElements, {html: true}));
+            var date = this.metadata.getCreationDate();
+            var dateSeparator = "created ";
+            var dateTitle = "Creation date";
+
+            if(!date) {
+                date = this.metadata.getPublicationDate();
+                dateTitle = "Publication date";
+                dateSeparator = "published ";
+            }
+
+            if(date) {
+                var dateEl = $("<strong class='cudl-date'>")
+                    .attr("title", dateTitle)
+                    .text(date)[0];
+
+                if(summaryHtml.length) {
+                    dateSeparator = ", " + dateSeparator;
+                }
+
+                summaryHtml = summaryHtml.add([
+                    document.createTextNode(dateSeparator), dateEl]);
+            }
+
+            return summaryHtml;
         },
 
         render: function render() {
@@ -790,6 +817,24 @@ $(function() {
         getPrimaryDescription: function getPrimaryDescription() {
             var primaryStructure = this.getPrimaryStructure();
             return this.getDescription(primaryStructure.descriptiveMetadataID);
+        },
+
+        getCreationDate: function getCreationDate() {
+            var desc = this.getPrimaryDescription();
+            return (desc.creations &&
+                desc.creations.value &&
+                desc.creations.value[0] &&
+                desc.creations.value[0].dateDisplay &&
+                desc.creations.value[0].dateDisplay.displayForm);
+        },
+
+        getPublicationDate: function getPublicationDate() {
+            var desc = this.getPrimaryDescription();
+            return (desc.publications &&
+                desc.publications.value &&
+                desc.publications.value[0] &&
+                desc.publications.value[0].dateDisplay &&
+                desc.publications.value[0].dateDisplay.displayForm);
         },
 
         getTitle: function getTitle() {

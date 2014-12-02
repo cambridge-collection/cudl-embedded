@@ -152,11 +152,11 @@ button[disabled], input[disabled] {
 }
 
 
-.cudl-metadata-authors {
+.cudl-metadata-summary {
 	font-size: 14px;
 }
 
-.cudl-author {
+.cudl-author, .cudl-date {
 	font-size: 17px;
 }
 
