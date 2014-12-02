@@ -114,6 +114,10 @@ i, em {
 	font-style: italic;
 }
 
+b {
+	font-weight: bold;
+}
+
 br {
 	display: block;
 }
@@ -302,8 +306,13 @@ button[disabled], input[disabled] {
 	padding: 0 18px 18px 18px;
 	-webkit-overflow-scrolling: touch;
 	overflow-y: auto;
+	overflow-x: hidden;
 	width: 100%;
 	height: 100%;
+}
+
+.cudl-viewer-metadata-content img {
+	max-width: 100%;
 }
 
 .cudl-viewer-metadata-container footer {

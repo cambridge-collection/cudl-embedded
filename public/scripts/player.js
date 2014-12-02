@@ -44,6 +44,18 @@ $(function() {
         };
     })();
 
+    function compose(funcs) {
+        return function() {
+            var result = arguments;
+
+            for(var i in funcs) {
+                var func = funcs[i];
+                result = [func.apply(undefined, result)];
+            }
+            return result[0];
+        };
+    };
+
     function XDomainRequestAjaxTransport(options, jqXHR) {
         this.options = options;
         this.jqXHR = jqXHR;
@@ -545,7 +557,7 @@ $(function() {
             var md = this.metadata;
             var $el = $("<div>").html($(this.template).text());
 
-            var abstract = this.autoSizeEmbededObjects(md.getAbstract());
+            var abstract = this.preprocessMetadataHtml(md.getAbstract());
             if(!abstract.length) {
                 abstract = "<em>No description available</em>";
             }
@@ -558,6 +570,61 @@ $(function() {
                 .text(md.getImageCopyrightStatement());
 
             return $el.children();
+        },
+
+        preprocessMetadataHtml: function preprocessMetadataHtml(html) {
+            return compose([
+                this.stripInlineStyles,
+                this.autoSizeEmbededObjects,
+                $.proxy(this.fixCudlUrlReferences, this),
+                this.changeOnclickToJavascriptUri
+            ])(html);
+        },
+
+        changeOnclickToJavascriptUri:
+            function changeOnclickToJavascriptUri(html) {
+            var anchors = "a[onclick]";
+            return $(html).find(anchors).addBack(anchors).each(function(_, a) {
+                var $a = $(a);
+                $a.text($a.text());
+                $a.append($($.parseHTML("&nbsp;<span class='fa fa-file-o'></span>")));
+                $a.addClass("cudl-image-link");
+                $a.attr("title", "Jump to page in this item");
+            }).end().end();
+        },
+
+        stripInlineStyles: function stripInlineStyles(html) {
+            var styled = $(html).find("[style]").addBack("[style]")
+                .filter(":not(img)");
+
+            // For debugging purposes, list the removed styles
+            var styles = $.map(styled, function(x) {
+                return $(x).attr("style");
+            });
+            if(styles.length) {
+                console.info("removed styles:", styles);
+            }
+
+            return styled.removeAttr("style").end().end().end();
+        },
+
+        fixCudlUrlReferences: function fixCudlUrlReferences(html) {
+            var cudlService = this.viewerModel.getCudlService();
+            html = $(html);
+
+            // Fix img src attrs with only a path
+            var imgs = "img[src^='/']";
+            html.find(imgs).addBack(imgs).each(function (_, img) {
+                img.src = cudlService.getAbsoluteUrl(
+                    $(img).attr("src"));
+            });
+
+            // Fix a href attrs with only a path
+            var anchors = "a[href^='/']";
+            html.find(anchors).addBack(anchors).each(function(_, a) {
+                a.href = cudlService.getAbsoluteUrl($(a).attr("href"));
+            });
+            return html;
         },
 
         /**
@@ -624,6 +691,9 @@ $(function() {
         this.metadataUrlPrefix = options.metadataUrlPrefix;
         this.metadataUrlSuffix = options.metadataUrlSuffix;
         this.dziUrlPrefix = options.dziUrlPrefix;
+
+        this.urlManipulator = document.createElement("a");
+        this.urlManipulator.href = options.metadataUrlHost;
     }
 
     CudlService.DEFAULT_OPTIONS = {};
@@ -671,6 +741,11 @@ $(function() {
 
         metadataFromJson: function metadataFromJson(json) {
             return new CudlMetadata(json);
+        },
+
+        getAbsoluteUrl: function getAbsoluteUrl(path) {
+            this.urlManipulator.pathname = path;
+            return this.urlManipulator.href;
         }
     });
 
@@ -1005,7 +1080,8 @@ $(function() {
     var cudlService = new CudlService({
         metadataUrlPrefix: "/v1/metadata/json/",
         metadataUrlSuffix: "",
-        dziUrlPrefix: "http://cudl.lib.cam.ac.uk"
+        dziUrlPrefix: "http://cudl.lib.cam.ac.uk",
+        metadataUrlHost: "//cudl.lib.cam.ac.uk:80"
     });
 
     var cudlViewerModel = new CudlViewerModel({
@@ -1051,4 +1127,14 @@ $(function() {
         cudlViewerModel.setItemId(getItemId());
         cudlViewerModel.setImageNumber(getPage());
     });
+
+    // implement the global store.loadPage() method which is used by the
+    // metadata's anchor tags (via onclick attrs) to load pages.
+    window.store = {
+        loadPage: function loadPage(number) {
+            console.log("loading page via store.loadPage(", number, ")");
+            cudlViewerModel.setImageNumber(number);
+            return false;
+        }
+    };
 });
