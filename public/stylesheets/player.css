@@ -110,12 +110,20 @@ a:hover {
 	text-decoration: underline;
 }
 
-i {
+i, em {
 	font-style: italic;
 }
 
 br {
 	display: block;
+}
+
+code {
+	font-family: monospace;
+}
+
+button[disabled], input[disabled] {
+	cursor: not-allowed;
 }
 
 .cudl-embedded-object-wrapper {
@@ -694,7 +702,7 @@ br {
 	margin: 0 auto;
 
 	max-width: 100%;
-	width:230px;
+	width:325px;
 }
 
 .error {

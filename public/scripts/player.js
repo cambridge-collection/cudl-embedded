@@ -134,7 +134,14 @@ $(function() {
         }
         return parsed;
     }
-    window.parseUriQuery = parseUriQuery;
+
+    var escapeAsHtml = (function() {
+        var $div = $("<div>");
+
+        return function escapeAsHtml(text) {
+            return $div.text(text).html();
+        };
+    })();
 
     function extend(cls, supercls, props) {
         cls.prototype = Object.create(supercls.prototype, props);
@@ -177,6 +184,7 @@ $(function() {
 
         this.title = options.title;
         this.body = options.body;
+        this.bodyHtml = options.bodyHtml;
         this.setEl($.parseHTML(options.template.text()));
         this.render();
         this.$el.on("click", ".cudl-btn-close", $.proxy(this.onClose, this));
@@ -189,7 +197,13 @@ $(function() {
     $.extend(CudlErrorView.prototype, {
         render: function render() {
             this.$el.find("h2 span").text(this.title);
-            this.$el.find("p").text(this.body);
+
+            if(this.bodyHtml) {
+                this.$el.find("p").html(this.bodyHtml);
+            }
+            else {
+                this.$el.find("p").text(this.body);
+            }
         },
 
         onClose: function onClose() {
@@ -310,10 +324,22 @@ $(function() {
             .on("click", ".cudl-btn-img-next",
                 $.proxy(this.incrementImageNumber, this, 1));
 
+        this.onMetadataChanged();
     }, View);
     $.extend(CudlImageNumberView.prototype, {
         onMetadataChanged: function onMetadataChanged() {
-            this.$el.find(".cudl-img-last").text(this.viewerModel.getImageCount());
+            if(this.viewerModel.getMetadata() === null) {
+               this.disableInput(true);
+            }
+            else {
+                this.disableInput(false);
+                this.$el.find(".cudl-img-last").text(
+                    this.viewerModel.getImageCount());
+            }
+        },
+
+        disableInput: function disableInput(isDisabled) {
+            this.$el.find("button,input").prop("disabled", !!isDisabled);
         },
 
         onImageNumberChanged: function onImageNumberChanged() {
@@ -368,13 +394,19 @@ $(function() {
             var viewer = this.viewerView.getViewer();
             var viewport = viewer.viewport;
 
+            if(viewport == null)
+                return;
+
             viewport.setRotation(viewport.getRotation() + 90 * direction);
         },
 
         zoom: function zoom(direction) {
-            var viewer = this.viewerView.getViewer();
-            var viewport = viewer.viewport;
-            var delta;
+            var viewer = this.viewerView.getViewer(),
+                viewport = viewer.viewport,
+                delta;
+
+            if(viewport === null)
+                return;
 
             if(direction === "in") {
                 delta = 0.2;
@@ -621,8 +653,11 @@ $(function() {
                 function(xhr, textStatus, errorThrown) {
                     console.error(
                         "Error fetching metadata from: " + url, arguments);
-                    reportError();
-                    return "Unable to fetch metadata from CUDL.";
+                    return {
+                        xhr: xhr,
+                        textStatus: textStatus,
+                        errorThrown: errorThrown
+                    };
                 }
             );
         },
@@ -650,6 +685,10 @@ $(function() {
                 index[descs[i].ID] = descs[i];
             }
             return index;
+        },
+
+        isEmbeddable: function() {
+            return this.json.embeddable !== false;
         },
 
         getPages: function getPages() {
@@ -747,8 +786,12 @@ $(function() {
             // that we can abort it if required.
             var jqxhrOut = [];
             var futureMetadata = this.cudlService.getMetadata(this.itemId, jqxhrOut);
+
             futureMetadata.done(
                 $.proxy(this.onMetadataAvailable, this, this.itemId));
+
+            futureMetadata.fail(
+                $.proxy(this.onMetadataLoadFailed, this, this.itemId));
 
             this.metadataJqxhr = jqxhr = jqxhrOut[0];
             jqxhr.always(function() {
@@ -756,6 +799,22 @@ $(function() {
                 self.bumpLoadingCount(-1);
             });
 
+        },
+
+        onMetadataLoadFailed: function onMetadataLoadFailed(itemId, details) {
+            var body, bodyHtml, title;
+            var status = details.xhr.status;
+            if(status == 404) {
+                title = "Item not found";
+                bodyHtml = "The item “<code>" + escapeAsHtml(itemId) +
+                "</code>” does not exist";
+            }
+            else if(Math.floor(status / 100) === 4) {
+                body = "There may be a problem with the embed code";
+            }
+            reportError({title: title, bodyHtml: bodyHtml, body: body});
+
+            console.log("reporting error fetching metadata", details);
         },
 
         bumpLoadingCount: function bumpLoadingCount(amount) {
@@ -781,6 +840,12 @@ $(function() {
             // current itemId
             if(itemId !== this.itemId) {
                 return;
+            }
+
+            // Some items are not allowed to be embedded
+            if(!metadata.isEmbeddable()) {
+                reportUnembeddableItem(this, metadata);
+                return; // Don't set metadata
             }
 
             this.metadata = metadata;
@@ -871,11 +936,22 @@ $(function() {
 
     function reportError(options) {
         options = options || {};
-        var error = new CudlErrorView({
-            title: options.title,
-            body: options.body
-        });
+        var error = new CudlErrorView(options);
         $(".errors").append(error.el);
+    }
+
+    function reportUnembeddableItem(viewerModel, metadata) {
+
+        var template = $("#cudl-error-no-embed-template").text();
+        var bodyHtml = $($.parseHTML(template));
+        bodyHtml.find("em").text("“" + metadata.getTitle() + "”");
+        bodyHtml.find("a").attr("href", viewerModel.getItemCudlUrl());
+        bodyHtml.find("a").attr("title", metadata.getTitle());
+
+        reportError({
+            title: "Item cannot be embedded",
+            bodyHtml: bodyHtml
+        });
     }
 
     function getItemId() {
