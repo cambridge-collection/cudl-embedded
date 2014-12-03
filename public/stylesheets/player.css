@@ -84,6 +84,9 @@ html, button, input[type=text], .fa > * {
 html, body {
 	height: 100%;
 	width: 100%;
+}
+
+html, body, input {
 	font-size: 14px;
 }
 
@@ -246,14 +249,12 @@ button[disabled], input[disabled] {
 .cudl-img-current {
 	margin-right: 3px;
 	text-align: right;
-	/*cursor: pointer;*/
-	border-bottom: 1px solid #858585;
 	width: 2.5em;
 	padding: 0;
 
 	/* Override input styling to look like regular text */
 	background: none;
-	border: 1px transparent;
+	border: 1px solid transparent;
 	border-radius: 3px;
 
 	transition: background 0.1s, border 0.1s;
