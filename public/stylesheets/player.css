@@ -250,6 +250,31 @@ button[disabled], input[disabled] {
 	border-color: #535353;
 	border-width: 0;
 }
+/* Drop shadow in metadata */
+.pointerevents .cudl-viewer-metadata:before {
+	/* Overlay over the visible content area*/
+	content: "";
+	display: block;
+	position: absolute;
+	width: 100%;
+
+	/* Need to ignore pointer events so that the metadata underneath can
+       receive clicks/scrolls etc. */
+	pointer-events: none;
+
+	/* Draw a black gradient at top and bottom to simulate a shadow. */
+	background:
+		linear-gradient(
+				to bottom,
+				rgba(0, 0, 0, 0.5) 0px,
+				rgba(0, 0, 0, 0) 10px),
+		linear-gradient(
+				to top,
+				rgba(0, 0, 0, 0.5) 0px,
+				rgba(0, 0, 0, 0) 10px);
+
+	z-index: 3;
+}
 
 
 .hidden .cudl-viewer-metadata-content {
@@ -264,12 +289,17 @@ button[disabled], input[disabled] {
 	   it becomes hidden as soon as it starts to slide away. */
 	transition: visibility 0.8s;
 
-	padding: 0 18px 18px 18px;
+	padding: 10px 9px;
 	-webkit-overflow-scrolling: touch;
 	overflow-y: auto;
 	overflow-x: hidden;
 	width: 100%;
 	height: 100%;
+}
+/* Reduce the spacing of the first metadata element as there's padding
+   provided by the container. */
+.cudl-viewer-metadata-content > :first-child {
+	margin-top: 0px;
 }
 
 .cudl-viewer-metadata-content img {
@@ -373,6 +403,8 @@ button[disabled], input[disabled] {
 @media (min-width: 460px) {
 
 	.cudl-viewer-metadata-container {
+		padding: 9px;
+
 		border-left-width: 1px;
 
 		background: linear-gradient(
@@ -388,6 +420,12 @@ button[disabled], input[disabled] {
 		-webkit-transform: translate(304px, 0px);
 		-moz-transform: translate(304px, 0px);
 		transform: translate(304px, 0px);
+	}
+
+	.pointerevents .cudl-viewer-metadata:before {
+		left: 1px;
+		top: 9px;
+		bottom: 9px;
 	}
 
 	.cudl-metadata-toggle-btn {
@@ -444,6 +482,11 @@ button[disabled], input[disabled] {
 	}
 
 	.cudl-viewer-metadata-container {
+		/* Add some space above the metadata scroll area so that it doesn't cut
+		   off right under the border when scrolled down. */
+		padding: 9px;
+		padding-top: 18px;
+
 		border-top-width: 1px;
 
 		background: linear-gradient(
@@ -452,6 +495,11 @@ button[disabled], input[disabled] {
 				rgba(255, 255, 255, 0) 10px),
 				rgba(0, 0, 0, 0.88);
 		box-shadow: 0 -4px 5px 0 rgba(0, 0, 0, 0.35);
+	}
+	.pointerevents .cudl-viewer-metadata:before {
+		left: 0;
+		top: 19px;
+		bottom: 9px;
 	}
 
 	.cudl-viewer-metadata.hidden {
@@ -494,49 +542,6 @@ button[disabled], input[disabled] {
 		top: 74px;
 		left: 2px;
 		width: 34px;
-	}
-
-
-	/* Add some space above the metadata scroll area so that it doesn't cut
-	   off right under the border when scrolled down. */
-	.cudl-viewer-metadata-container {
-		padding-top: 18px;
-	}
-	/* Reduce the spacing of the first metadata element now that we've
-	   created extra space above it. */
-	.cudl-viewer-metadata-content > :first-child {
-		margin-top: 10px;
-	}
-	/* Drop shadow in metadata */
-	.pointerevents .cudl-viewer-metadata-container::before {
-		/* Overlay over the visible content area*/
-		content: "";
-		display: block;
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-
-		/* Need to ignore pointer events so that the metadata underneath can
-		   receive clicks/scrolls etc. */
-		pointer-events: none;
-
-		/* Draw a black gradient at top and bottom to simulate a shadow. */
-		background:
-			linear-gradient(
-				to bottom,
-				rgba(0, 0, 0, 0) 18px,
-				rgba(0, 0, 0, 0.5) 18px,
-				rgba(0, 0, 0, 0) 28px),
-			linear-gradient(
-				to top,
-				rgba(0, 0, 0, 0.5) 0%,
-				rgba(0, 0, 0, 0) 10px);
-
-		/* Raise above any embedded objects in the metadata. */
-		z-index: 1;
-		/* Fixme: opacity; */
 	}
 }
 
@@ -703,4 +708,30 @@ button[disabled], input[disabled] {
 	position: relative;
 	top: -5px;
 	right: -5px;
+}
+
+
+/* Custom scrollbars for webkit browsers.
+   This makes the scrollbar less obtrusive.*/
+::-webkit-scrollbar {
+	width: 10px;
+	background-color: rgba(47, 47, 47, 1);
+	padding: 5px;
+	margin: 5px;
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #6f6f6f;
+	width:100%;
+	border-radius: 5px;
+	box-shadow: inset 0 0 4px 2px rgba(255, 255, 255, 0.1),
+				0 0 4px 2px rgba(0, 0, 0, 0.3);
+}
+::-webkit-scrollbar-thumb:hover {
+	background-color: #656565;
+
+}
+::-webkit-scrollbar-thumb:active {
+	background-color: #5d5d5d;
 }
