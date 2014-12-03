@@ -173,8 +173,8 @@ button[disabled], input[disabled] {
 	padding: 3px 0 0 0;
 	z-index: 3;
 }
-.cudl-page-position > * {
-	vertical-align: baseline;
+.cudl-page-position .cudl-btn {
+	vertical-align: top;
 }
 .cudl-page-position .cudl-btn {
 	margin: 0 6px;
