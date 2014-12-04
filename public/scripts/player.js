@@ -480,6 +480,35 @@ $(function() {
             }
         },
 
+        /**
+         * Event handler for home and open events which sets the initial image
+         * position to our desired location. This is required because our
+         * transparent UI partially covers the viewer el and we don't want the
+         * image to start off underneith it (even though it may be dragged under
+         * it later).
+         */
+        zoomToHome: function zoomToHome(eventName, event) {
+            var immediatley = true;
+            // A home event is fired as the viewport is created, but before the
+            // viewer has the viewport assigned. We handle this by listening
+            // for the open event in addition to home events.
+            if(eventName === "home") {
+                if(this.viewer.viewport === null) {
+                    return;
+                }
+                immediatley = event.immediately;
+            }
+
+            // Get the area of the viewer element which the image should start
+            // in.
+            var visiblePixels = this.getViewerElVisiblePixels();
+            // Get the viewport coord bounding box to zoom the viewport to in
+            // order to place the image into our visible pixels
+            var bounds = this.getFitBounds(visiblePixels);
+            // Zoom the viewport to our location
+            this.viewer.viewport.fitBounds(bounds, immediatley);
+        },
+
         createViewer: function createViewer() {
             this.viewer = OpenSeadragon({
                 element: this.el,
@@ -489,6 +518,116 @@ $(function() {
                 showNavigator: false,
                 showSequenceControl: false
             });
+
+            // Listen for tilesources being loaded and opened so that we can
+            // adjust the initial position of the image to fit our UI.
+            this.viewer.addHandler("home",
+                $.proxy(this.zoomToHome, this, "home"));
+            this.viewer.addHandler("open",
+                $.proxy(this.zoomToHome, this, "open"));
+        },
+
+        /**
+         * Get the bounding box which the image must stay within on initial
+         * image load. The coordinates are those of the viewer element (which
+         * fills 100% of the viewport).
+         */
+        getViewerElVisiblePixels: function getViewerElVisiblePixels() {
+            var viewerEl = this.el;
+            var viewerRect = viewerEl.getBoundingClientRect();
+
+            var top, right, bottom, left;
+
+            // The hardcoded offset values here correspond to the amount the
+            // UI overlays the viewer element. It's awkward to calculate the
+            // actual values from the page elements, as their position changes
+            // depending on state, e.g. whether the sidebar is open/closed.
+            if(window.matchMedia && matchMedia("(max-width: 459px)").matches) {
+                top = viewerRect.top + 64;
+                left = viewerRect.left;
+                right = viewerRect.right;
+                bottom = viewerRect.height - 10;
+            }
+            else {
+                top = viewerRect.top + 32;
+                left = viewerRect.left;
+                right = viewerRect.right - 16;
+                bottom = viewerRect.height;
+            }
+            return new OpenSeadragon.Rect(
+                left, top, right - left, bottom - top);
+        },
+
+        /**
+         * Get a bounding rectangle which places the current image entirely
+         * within the specified portion of the viewport.
+         *
+         * The visible area of the image is maximised by filling as much of
+         * the width/height as possible.
+         *
+         * @param {OpenSeadragon.Rect} destPixels the rectangle in the viewer
+         *        element's pixel coordinates that the image should be fitted
+         *        within.
+         * @return {OpenSeadragon.Rect} a rect representing the viewport bounds
+         *        that need to be passed to viewport.fitBounds() to place the
+         *        image within the screen pixels specified by destPixels.
+         */
+        getFitBounds: function getFitBounds(destPixels) {
+            var viewport = this.viewer.viewport;
+            if(viewport === null) {
+                throw new Error("viewer has no viewport: is an image loaded?");
+            }
+
+            var viewportSizePixels = viewport.getContainerSize();
+            var viewportAspect = viewport.getAspectRatio();
+
+            // Openseadragon uses normalised coordinates: image left top is
+            // (0, 0). right bottom is (1, (imgHeight/imgWidth));
+            var imageHeight = viewport.contentAspectY;
+            var imageWidth = 1;
+
+            // The proportion (0-1) of the viewport which is left,top padding
+            // and width,height visible
+            var offsetXProp = destPixels.x / viewportSizePixels.x,
+                offsetYProp = destPixels.y / viewportSizePixels.y,
+                visibleHeightProp = destPixels.height / viewportSizePixels.y,
+                visibleWidthProp = destPixels.width / viewportSizePixels.x;
+
+            var bounds = new OpenSeadragon.Rect();
+
+            var contentNarrowerThanViewport =
+                viewport.contentAspectX < destPixels.getAspectRatio();
+
+            // Narrower, so fit height, center width
+            if(contentNarrowerThanViewport) {
+
+                // We need to zoom the viewport such that the image fits into
+                // the visible height
+                bounds.height = imageHeight / visibleHeightProp;
+                bounds.width = bounds.height * viewport.getAspectRatio();
+            }
+            // Wider, so fit width, center height
+            else {
+
+                bounds.width = imageWidth / visibleWidthProp;
+                bounds.height = bounds.width / viewport.getAspectRatio();
+            }
+
+            // Offset x and y back by the amount of padding and half the
+            // available space around the image (to center it).
+            bounds.y = 0 - (
+                // Top padding
+                (bounds.height * offsetYProp) +
+                // Centering
+                ((bounds.height * visibleHeightProp) - imageHeight) / 2);
+
+            bounds.x = 0 - (
+                // Top padding
+                (bounds.width * offsetXProp) +
+                // Centering
+                (((bounds.width * visibleWidthProp) - imageWidth) / 2));
+
+            return bounds;
         }
     });
 
