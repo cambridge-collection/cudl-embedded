@@ -132,6 +132,20 @@ button[disabled], input[disabled] {
 	background: #000000;
 }
 
+/* Inner shadow around openseadragon viewer */
+.pointerevents .openseadragon-container:before {
+	content: "";
+	display: block;
+	position: relative;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	box-shadow: inset 0 0 20px 5px rgba(0,0,0,0.5);
+	z-index: 1;
+}
+
 .cudl-viewer header {
 
   	overflow: hidden;
