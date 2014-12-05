@@ -519,6 +519,9 @@ $(function() {
                 showSequenceControl: false
             });
 
+            // Disable OpenSeadragon's keyboard commands as we provide our own
+            $(this.viewer.keyboardCommandArea).prop("tabindex", -1);
+
             // Listen for tilesources being loaded and opened so that we can
             // adjust the initial position of the image to fit our UI.
             this.viewer.addHandler("home",
