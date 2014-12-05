@@ -820,7 +820,7 @@ $(function() {
         },
 
         render: function render() {
-            this.$el.find(".cudl-viewer-metadata-content")
+            this.$el.find(".cudl-viewer-metadata-content .cudl-metadata")
                 .empty().append(this.renderTemplate());
         },
 
@@ -848,6 +848,24 @@ $(function() {
 
         getPageTitle: function getPageTitle(itemTitle) {
             return itemTitle + " - Cambridge University Digital Library Embedded Viewer"
+        }
+    });
+
+    var CudlShortcutsView = extend(function CudlShortcutsView(options) {
+        CudlShortcutsView.super.call(this, options);
+
+        $(document).on("click", options.triggerer,
+            $.proxy(this.onToggleEvent, this));
+    }, View);
+    $.extend(CudlShortcutsView.prototype, {
+
+        onToggleEvent: function onToggleEvent(e) {
+            this.toggleShortcutVisibility();
+            return false;
+        },
+
+        toggleShortcutVisibility: function toggleShortcutVisibility() {
+            this.$el.slideToggle();
         }
     });
 
@@ -1522,6 +1540,11 @@ $(function() {
         viewerModel: cudlViewerModel
     });
 
+    var shortcutsView = new CudlShortcutsView({
+        el: $(".cudl-shortcut-definitions")[0],
+        triggerer: ".cudl-toggle-shortcuts"
+    });
+
     function getPanActions(options) {
         var actions = {};
 
@@ -1548,8 +1571,8 @@ $(function() {
                 "x": new OSDRotateAction({ direction: "clockwise", amount: 360/4, viewer: viewer }),
 
                 // Rotate small amounts with shift held
-                "Z": new OSDRotateAction({ direction: "anticlockwise", amount: 360/32, viewer: viewer }),
-                "X": new OSDRotateAction({ direction: "clockwise", amount: 360/32, viewer: viewer }),
+                "Z": new OSDRotateAction({ direction: "anticlockwise", amount: 360/36, viewer: viewer }),
+                "X": new OSDRotateAction({ direction: "clockwise", amount: 360/36, viewer: viewer }),
 
                 "r": new ButtonPressAction({ button: ".cudl-metadata-toggle-btn" }),
                 "f": new ButtonPressAction({ button: ".cudl-btn-fullscreen" }),

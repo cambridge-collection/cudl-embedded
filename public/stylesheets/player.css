@@ -298,7 +298,7 @@ button[disabled], input[disabled] {
 }
 /* Reduce the spacing of the first metadata element as there's padding
    provided by the container. */
-.cudl-viewer-metadata-content > :first-child {
+.cudl-viewer-metadata-content .cudl-metadata > :first-child {
 	margin-top: 0px;
 }
 
@@ -734,4 +734,56 @@ button[disabled], input[disabled] {
 }
 ::-webkit-scrollbar-thumb:active {
 	background-color: #5d5d5d;
+}
+
+
+/* Footer links */
+.cudl-footer-links {
+	padding: 0;
+	text-align: center;
+	font-variant: small-caps;
+	font-size: 12px;
+}
+.cudl-footer-links a {
+	color: inherit;
+}
+
+.cudl-footer-links li {
+	display: inline;
+
+}
+.cudl-footer-links li:not(:last-child):after {
+	content: " | ";
+}
+
+.cudl-shortcut-definitions {
+	display: none;
+
+	margin: 0 25px;
+	border-width: 0px 1px;
+	border-style: solid;
+	border-color: #626262;
+	padding: 0 15px;
+}
+
+.cudl-shortcut-definitions h3 {
+	font-variant: small-caps;
+}
+
+.cudl-shortcut-definitions table {
+	width: 100%;
+}
+
+.cudl-shortcut-definitions tbody {
+	vertical-align: baseline;
+	margin-bottom: 5px;
+}
+
+.cudl-shortcut-definitions td {
+	border-bottom: 1px solid #2A2A2A;
+	padding: 3px;
+}
+
+.cudl-shortcut-definitions td:last-child {
+	font-weight: bold;
 }

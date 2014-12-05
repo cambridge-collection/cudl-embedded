@@ -15,12 +15,6 @@ html
 			| <h2 class="cudl-metadata-summary"></h2>
 			| <section class="cudl-metadata-abstract"></section>
 			| <p class="cudl-copyright-statement"></p>
-			| <footer>
-			|   <div class="cudl-logos">
-			|     <a title="University of Cambridge Digital Library" target="_blank" href="http://cudl.lib.cam.ac.uk/"><img class="cudl-logo" alt="University of Cambridge Digital Library" src="/images/player/cudl-logo-1x.png" srcset="/images/player/cudl-logo-1x.png 1x, /images/player/cudl-logo-2x.png 2x, /images/player/cudl-logo-3x.png 3x"></a>
-			|     <a title="Cambridge University Library" target="_blank" href="http://lib.cam.ac.uk/"><img class="cudl-cul-logo" alt="Cambridge University Library" src="/images/player/cul-logo-1x.png" srcset="/images/player/cul-logo-1x.png 1x, /images/player/cul-logo-2x.png 2x, /images/player/cul-logo-3x.png 3x"></a>
-			|   </div>
-			| </footer>
 		script#cudl-error-template(type='text/html')
 			| <div class="error">
 			| 	<h2>
@@ -59,6 +53,80 @@ html
 					button.cudl-btn.cudl-metadata-toggle-btn(accesskey="h", title="Show/hide the sidebar")
 					.cudl-viewer-metadata-container
 						.cudl-viewer-metadata-content
+							.cudl-metadata
+							footer
+								div.cudl-logos
+									a(title="University of Cambridge Digital Library", target="_blank", href="http://cudl.lib.cam.ac.uk/")
+										img.cudl-logo(alt="University of Cambridge Digital Library", src="/images/player/cudl-logo-1x.png", srcset="/images/player/cudl-logo-1x.png 1x, /images/player/cudl-logo-2x.png 2x, /images/player/cudl-logo-3x.png 3x")
+									a(title="Cambridge University Library", target="_blank", href="http://lib.cam.ac.uk/")
+										img.cudl-cul-logo(alt="Cambridge University Library", src="/images/player/cul-logo-1x.png" srcset="/images/player/cul-logo-1x.png 1x, /images/player/cul-logo-2x.png 2x, /images/player/cul-logo-3x.png 3x")
+
+								div.cudl-shortcut-definitions
+									h3 Keyboard Shortcuts
+									table
+										thead
+											tr
+												td(colspan=2) Action
+												td Key
+										tbody
+											tr
+												td(rowspan="4") Pan:
+												td Right
+												td w
+											tr
+												td Left
+												td a
+											tr
+												td Down
+												td s
+											tr
+												td Right
+												td d
+										tbody
+											tr
+												td(rowspan="2") Zoom:
+												td Out
+												td q
+											tr
+												td In
+												td e
+										tbody
+											tr
+												td(rowspan="4") Rotate:
+												td 90° Left
+												td z
+											tr
+												td 90° Right
+												td x
+											tr
+												td 10° Left
+												td Z
+											tr
+												td 10° Right
+												td X
+										tbody
+											tr
+												td(rowspan="2") Image:
+												td Next
+												td v
+											tr
+												td Previous
+												td c
+										tbody
+											tr
+												td(colspan=2) Fullscreen on/off
+												td f
+										tbody
+											tr
+												td(colspan=2) Sidebar show/hide
+												td r
+								ul.cudl-footer-links
+									li
+										a(href="http://www.lib.cam.ac.uk/privacy_statement.html", target="_blank") Privacy
+									li
+										a(href="http://cudl.lib.cam.ac.uk/terms/", target="_blank") Terms & Conditions
+									li
+										a.cudl-toggle-shortcuts(title="Show keyboard shortcuts", href="javascript:0;") Shortcuts
 			.loading-indicator
 				.ball-container
 					.ball-wrapper
