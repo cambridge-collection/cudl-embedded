@@ -1,6 +1,19 @@
 $(function() {
     "use scrict";
 
+    /** Get the number of milliseconds since ~page load. */
+    var now = (function(){
+        if(window.performance && window.performance.now) {
+            return $.proxy(window.performance.now, window.performance);
+        }
+
+        // IE9 etc
+        var start = Date.now();
+        return function now() {
+            return Date.now() - start;
+        }
+    })();
+
     var isSameOrigin = (function() {
         function normaliseAnchorOriginFields(anchor) {
             // IE doesn't populate implicit fields of relative URLs
@@ -901,6 +914,8 @@ $(function() {
             jqxhrOut = jqxhrOut || [];
             var url = this.getMetadataUrl(id);
 
+            var startMillis = now();
+
             var jqxhr = $.ajax({
                 url: url,
                 dataType: "json"
@@ -908,6 +923,9 @@ $(function() {
             jqxhrOut.push(jqxhr);
             return jqxhr.then(
                 function(data, textStatus, xhr) {
+                    ga("send", "timing", "Metadata", "Downloaded",
+                        now() - startMillis, url);
+
                     return data;
                 },
                 function(xhr, textStatus, errorThrown) {
@@ -1155,6 +1173,9 @@ $(function() {
 
             var page = this.getMetadata().getPages()[imageNumber - 1];
             var url = this.getCudlService().getDziUrl(page.displayImageURL);
+
+            var startMillis = now();
+
             this.tilesourceJqxhr = jqxhr = $.ajax({
                 url: url,
                 dataType: "xml"
@@ -1166,6 +1187,9 @@ $(function() {
             });
 
             return jqxhr.then(function(data) {
+                ga("send", "timing", "Dzi", "Downloaded",
+                    now() - startMillis, url);
+
                 var dzi = new OpenSeadragon.DziTileSource();
                 if(!dzi.supports(data)) {
                     // Reject the returned promise
