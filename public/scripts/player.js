@@ -1278,6 +1278,8 @@ $(function() {
      * @constructor
      */
     var OSDPanAction = extend(function OSDPanAction(options) {
+        options = $.extend({}, OSDPanAction.DEFAULT_OPTIONS, options);
+
         OSDPanAction.super.call(this, options);
 
         this.directionName = options.direction;
@@ -1286,7 +1288,11 @@ $(function() {
             this.directionVectorFromDirection(
                 this.directionName, this.panDistance);
     }, OSDAction);
-    OSDPanAction.DEFAULT_OPTIONS = {};
+    OSDPanAction.DEFAULT_OPTIONS = {
+        direction: "right",
+        distance: 1/10,
+        directionVector: null
+    };
     $.extend(OSDPanAction.prototype, {
         directionVectorFromDirection: function directionVectorFromDirection(
             directionName, panDistance) {
@@ -1314,7 +1320,106 @@ $(function() {
                 return;
             }
 
-            this.getViewport().panBy(this.getPanDelta());
+            this.getViewport().panBy(this.getPanDelta()).applyConstraints();
+        }
+    });
+
+    var OSDZoomAction = extend(function OSDZoomAction(options) {
+        options = $.extend({}, OSDZoomAction.DEFAULT_OPTIONS, options);
+
+        OSDZoomAction.super.call(this, options);
+
+        this.delta = options.delta || this.calculateDelta(
+            options.direction, options.amount);
+
+    }, OSDAction);
+    OSDZoomAction.DEFAULT_OPTIONS = {
+        delta: null,
+        direction: "in",
+        amount: 0.2
+    };
+    $.extend(OSDZoomAction.prototype, {
+        calculateDelta: function calculateDelta(direction, amount) {
+            var delta = Math.abs(amount);
+
+            if (direction === "out") {
+                delta *= -1;
+            }
+            else if (direction !== "in") {
+                throw new Error("Unknown direction: " + direction);
+            }
+
+            return 1 + delta;
+        },
+
+        getDelta: function getDelta() {
+            return this.delta;
+        },
+
+        trigger: function trigger() {
+            if (!this.hasViewport()) {
+                return;
+            }
+            this.getViewport().zoomBy(this.getDelta()).applyConstraints();
+        }
+    });
+
+    var OSDRotateAction = extend(function OSDRotateAction(options) {
+        options = $.extend({}, OSDRotateAction.DEFAULT_OPTIONS, options);
+
+        OSDRotateAction.super.call(this, options);
+
+        this.delta = options.delta || this.calculateDelta(
+            options.direction, options.amount);
+
+    }, OSDAction);
+    OSDRotateAction.DEFAULT_OPTIONS = {
+        delta: null,
+        direction: "clockwise",
+        amount: 90
+    };
+    $.extend(OSDRotateAction.prototype, {
+        calculateDelta: function calculateDelta(direction, amount) {
+            var delta = Math.abs(amount);
+
+            if (direction === "anticlockwise") {
+                delta *= -1;
+            }
+            else if (direction !== "clockwise") {
+                throw new Error("Unknown direction: " + direction);
+            }
+
+            return delta;
+        },
+
+        getDelta: function getDelta() {
+            return this.delta;
+        },
+
+        trigger: function trigger() {
+            if (!this.hasViewport()) {
+                return;
+            }
+            var viewport = this.getViewport();
+            viewport.setRotation(
+                viewport.getRotation() + this.getDelta());
+        }
+    });
+
+    var ButtonPressAction = extend(function ButtonPressAction(options) {
+        options = $.extend({}, ButtonPressAction.DEFAULT_OPTIONS, options);
+        ButtonPressAction.super.call(this, options);
+
+        this.button = $(options.button);
+        if(this.button.length === 0) {
+            console.warning(
+                "No button elements will be pressed by this action.");
+        }
+    }, Action);
+    ButtonPressAction.DEFAULT_OPTIONS = {};
+    $.extend(ButtonPressAction.prototype, {
+        trigger: function trigger() {
+            $(this.button).click();
         }
     });
 
@@ -1431,10 +1536,27 @@ $(function() {
     }
 
     // Keyboard shortcuts
+    var viewer = viewerView.getViewer();
     var keyboardShortcutHandler = new KeyboardShortcutHandler({
         el: document.body,
         actions: $.extend(
-            {},
+            {
+                "q": new OSDZoomAction({ direction: "out", amount: 0.2, viewer: viewer}),
+                "e": new OSDZoomAction({ direction: "in", amount: 0.2, viewer: viewer}),
+
+                "z": new OSDRotateAction({ direction: "anticlockwise", amount: 360/4, viewer: viewer }),
+                "x": new OSDRotateAction({ direction: "clockwise", amount: 360/4, viewer: viewer }),
+
+                // Rotate small amounts with shift held
+                "Z": new OSDRotateAction({ direction: "anticlockwise", amount: 360/32, viewer: viewer }),
+                "X": new OSDRotateAction({ direction: "clockwise", amount: 360/32, viewer: viewer }),
+
+                "r": new ButtonPressAction({ button: ".cudl-metadata-toggle-btn" }),
+                "f": new ButtonPressAction({ button: ".cudl-btn-fullscreen" }),
+
+                "c": new ButtonPressAction({ button: ".cudl-btn-img-prev" }),
+                "v": new ButtonPressAction({ button: ".cudl-btn-img-next" })
+            },
             getPanActions({
                 directions: {
                     "w": "up",
@@ -1446,7 +1568,7 @@ $(function() {
                     // Distance each pan moves the viewport by
                     // (relative to the zoom level).
                     distance: 1/10,
-                    viewer: viewerView.getViewer()
+                    viewer: viewer
                 }
             })
         )
