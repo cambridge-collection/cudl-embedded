@@ -248,7 +248,9 @@ $(function() {
                 $.proxy(this.onFullscreenChange, this));
 
             // bootstrap initial state
+            this.initialising = true;
             this.onFullscreenChange();
+            this.initialising = false;
             this.$el.show();
         }
         else {
@@ -326,6 +328,11 @@ $(function() {
             this.$el.toggleClass("cudl-fullscreen fa-arrows-alt", !fullscreen);
             this.$el.toggleClass("fa-close", fullscreen);
             $("html").toggleClass("cudl-fullscreen", fullscreen);
+
+            if(!this.initialising) {
+                ga("send", "event", "Fullscreen",
+                    (fullscreen ? "Entered" : "Exited"));
+            }
         }
     });
 
