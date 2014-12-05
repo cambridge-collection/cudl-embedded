@@ -705,6 +705,8 @@ $(function() {
 
     $.extend(CudlMetadataView.prototype, {
         onShowHideToggled: function onShowHideToggled(e) {
+            ga("send", "event", "Metadata",
+                (this.$el.is(".hidden") ? "Opened" : "Closed"));
             this.$el.toggleClass("hidden");
         },
 
