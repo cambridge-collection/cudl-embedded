@@ -6,28 +6,40 @@ html
 		link(rel='stylesheet', href='/lib/normalize.css')
 		link(rel='stylesheet', href='/stylesheets/player.css')
 		link(rel='stylesheet', href='/lib/font-awesome/css/font-awesome.css')
+		script(type="text/javascript").
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q || []).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 		script(type='text/javascript' src="/lib/modernizr.custom.js")
 		script(type='text/javascript' src="/lib/openseadragon/openseadragon.js")
 		script(type='text/javascript' src="/lib/jquery.js")
 		script(type='text/javascript', src='/scripts/player.js')
-		script#cudl-metadata-template(type='text/html')
-			| <h1 class="cudl-metadata-title"><a title="View this item on the Cambridge University Digital Library" target="_blank"></a></h1>
-			| <h2 class="cudl-metadata-summary"></h2>
-			| <section class="cudl-metadata-abstract"></section>
-			| <p class="cudl-copyright-statement"></p>
-		script#cudl-error-template(type='text/html')
-			| <div class="error">
-			| 	<h2>
-			| 		<button class="cudl-btn cudl-btn-close fa fa-close" title="Hide this error"></button>
-			| 		<span></span>
-			| 	</h2>
-			| 	<p></p>
-			| </div>
-		script#cudl-error-no-embed-template(type='text/html')
-			| <p>
-			|   Sorry, the item <em></em> cannot be embedded at this time. Please view it on the
-			|   <a href="" target="_blank" title="">Cambridge University Digital Library</a> instead.
-			| </p>
+		script#cudl-metadata-template(type='text/html').
+			<h1 class="cudl-metadata-title"><a title="View this item on the Cambridge University Digital Library" target="_blank"></a></h1>
+			<h2 class="cudl-metadata-summary"></h2>
+			<section class="cudl-metadata-abstract"></section>
+			<p class="cudl-copyright-statement"></p>
+		script#cudl-error-template(type='text/html').
+			<div class="error">
+				<h2>
+					<button class="cudl-btn cudl-btn-close fa fa-close" title="Hide this error"></button>
+					<span></span>
+				</h2>
+				<p></p>
+			</div>
+		script#cudl-error-no-embed-template(type='text/html').
+			<p>
+				Sorry, the item <em></em> cannot be embedded at this time. Please view it on the
+				<a href="" target="_blank" title="">Cambridge University Digital Library</a> instead.
+			</p>
+		script#config(type="application/json")!= viewerSettings
+		script.
+			$(function() {
+				var config = JSON.parse($("#config").text());
+				console.log("referrer", document.referrer);
+				window.CudlViewer.initFromConfig(config);
+			});
 	body.cudl-viewer.loading
 			header
 				a.cudl-ucam-logo(href="https://cam.ac.uk/", target="_blank", title="University of Cambridge")

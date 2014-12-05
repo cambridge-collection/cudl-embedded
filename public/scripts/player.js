@@ -1498,60 +1498,10 @@ $(function() {
         $(document.body).toggleClass("loading", cudlViewerModel.isLoading());
     }
 
-    var cudlService = new CudlService({
-        metadataUrlPrefix: "/v1/metadata/json/",
-        metadataUrlSuffix: "",
-        dziUrlPrefix: "http://cudl.lib.cam.ac.uk",
-        metadataUrlHost: "//cudl.lib.cam.ac.uk:80"
-    });
-
-    var cudlViewerModel = new CudlViewerModel({
-        itemId: getItemId(),
-        cudlService: cudlService,
-        imageNumber: getPage(),
-        listeners: {
-            "change:loading": onLoadingChange
-        }
-    });
-
-    var viewerView = new CudlViewerView({
-        el: $(".cudl-viewer-player")[0],
-        viewerModel: cudlViewerModel
-    });
-
-    var metadataView = new CudlMetadataView({
-        el: $(".cudl-viewer-metadata")[0],
-        viewerModel: cudlViewerModel
-    });
-
-    var imageNumberView = new CudlImageNumberView({
-        el: $(".cudl-page-position")[0],
-        viewerModel: cudlViewerModel
-    });
-
-    var viewerButtonsView = new CudlViewerButtonsView({
-        el: $(".cudl-viewer-buttons")[0],
-        viewerView: viewerView
-    });
-
-    var fullscreenView = new CudlFullscreenView({
-        el: $(".cudl-btn-fullscreen")[0]
-    });
-
-    var pageTitleView = new CudlPageTitleView({
-        el: $("head title")[0],
-        viewerModel: cudlViewerModel
-    });
-
-    var shortcutsView = new CudlShortcutsView({
-        el: $(".cudl-shortcut-definitions")[0],
-        triggerer: ".cudl-toggle-shortcuts"
-    });
-
     function getPanActions(options) {
         var actions = {};
 
-        for(var key in options.directions) {
+        for (var key in options.directions) {
             var direction = options.directions[key];
             var actionOptions = $.extend(
                 {}, options.options, {direction: direction});
@@ -1561,58 +1511,145 @@ $(function() {
         return actions;
     }
 
-    // Keyboard shortcuts
-    var viewer = viewerView.getViewer();
-    var keyboardShortcutHandler = new KeyboardShortcutHandler({
-        el: document.body,
-        actions: $.extend(
-            {
-                "q": new OSDZoomAction({ direction: "out", amount: 0.2, viewer: viewer}),
-                "e": new OSDZoomAction({ direction: "in", amount: 0.2, viewer: viewer}),
+    function initFromConfig(config) {
 
-                "z": new OSDRotateAction({ direction: "anticlockwise", amount: 360/4, viewer: viewer }),
-                "x": new OSDRotateAction({ direction: "clockwise", amount: 360/4, viewer: viewer }),
-
-                // Rotate small amounts with shift held
-                "Z": new OSDRotateAction({ direction: "anticlockwise", amount: 360/36, viewer: viewer }),
-                "X": new OSDRotateAction({ direction: "clockwise", amount: 360/36, viewer: viewer }),
-
-                "r": new ButtonPressAction({ button: ".cudl-metadata-toggle-btn" }),
-                "f": new ButtonPressAction({ button: ".cudl-btn-fullscreen" }),
-
-                "c": new ButtonPressAction({ button: ".cudl-btn-img-prev" }),
-                "v": new ButtonPressAction({ button: ".cudl-btn-img-next" })
-            },
-            getPanActions({
-                directions: {
-                    "w": "up",
-                    "a": "left",
-                    "s": "down",
-                    "d": "right"
-                },
-                options: {
-                    // Distance each pan moves the viewport by
-                    // (relative to the zoom level).
-                    distance: 1/10,
-                    viewer: viewer
-                }
-            })
-        )
-    });
-
-    // Update the item/page when the hash changes
-    $(window).on("hashchange", function() {
-        cudlViewerModel.setItemId(getItemId());
-        cudlViewerModel.setImageNumber(getPage());
-    });
-
-    // implement the global store.loadPage() method which is used by the
-    // metadata's anchor tags (via onclick attrs) to load pages.
-    window.store = {
-        loadPage: function loadPage(number) {
-            console.log("loading page via store.loadPage(", number, ")");
-            cudlViewerModel.setImageNumber(number);
-            return false;
+        if(config.googleAnalyticsTrackingId) {
+            ga('create', config.googleAnalyticsTrackingId, 'auto');
+            ga('send', 'pageview');
         }
+
+        var cudlService = new CudlService({
+            metadataUrlPrefix: config.metadataUrlPrefix,
+            metadataUrlSuffix: config.metadataUrlSuffix,
+            dziUrlPrefix: config.dziUrlPrefix,
+            metadataUrlHost: config.metadataUrlHost
+        });
+
+        var cudlViewerModel = new CudlViewerModel({
+            itemId: getItemId(),
+            cudlService: cudlService,
+            imageNumber: getPage(),
+            listeners: {
+                "change:loading": onLoadingChange
+            }
+        });
+
+        var viewerView = new CudlViewerView({
+            el: $(".cudl-viewer-player")[0],
+            viewerModel: cudlViewerModel
+        });
+
+        var metadataView = new CudlMetadataView({
+            el: $(".cudl-viewer-metadata")[0],
+            viewerModel: cudlViewerModel
+        });
+
+        var imageNumberView = new CudlImageNumberView({
+            el: $(".cudl-page-position")[0],
+            viewerModel: cudlViewerModel
+        });
+
+        var viewerButtonsView = new CudlViewerButtonsView({
+            el: $(".cudl-viewer-buttons")[0],
+            viewerView: viewerView
+        });
+
+        var fullscreenView = new CudlFullscreenView({
+            el: $(".cudl-btn-fullscreen")[0]
+        });
+
+        var pageTitleView = new CudlPageTitleView({
+            el: $("head title")[0],
+            viewerModel: cudlViewerModel
+        });
+
+        var shortcutsView = new CudlShortcutsView({
+            el: $(".cudl-shortcut-definitions")[0],
+            triggerer: ".cudl-toggle-shortcuts"
+        });
+
+        // Keyboard shortcuts
+        var viewer = viewerView.getViewer();
+        var keyboardShortcutHandler = new KeyboardShortcutHandler({
+            el: document.body,
+            actions: $.extend(
+                {
+                    "q": new OSDZoomAction({
+                        direction: "out",
+                        amount: 0.2,
+                        viewer: viewer
+                    }),
+                    "e": new OSDZoomAction({
+                        direction: "in",
+                        amount: 0.2,
+                        viewer: viewer
+                    }),
+
+                    "z": new OSDRotateAction({
+                        direction: "anticlockwise",
+                        amount: 360 / 4,
+                        viewer: viewer
+                    }),
+                    "x": new OSDRotateAction({
+                        direction: "clockwise",
+                        amount: 360 / 4,
+                        viewer: viewer
+                    }),
+
+                    // Rotate small amounts with shift held
+                    "Z": new OSDRotateAction({
+                        direction: "anticlockwise",
+                        amount: 360 / 36,
+                        viewer: viewer
+                    }),
+                    "X": new OSDRotateAction({
+                        direction: "clockwise",
+                        amount: 360 / 36,
+                        viewer: viewer
+                    }),
+
+                    "r": new ButtonPressAction({button: ".cudl-metadata-toggle-btn"}),
+                    "f": new ButtonPressAction({button: ".cudl-btn-fullscreen"}),
+
+                    "c": new ButtonPressAction({button: ".cudl-btn-img-prev"}),
+                    "v": new ButtonPressAction({button: ".cudl-btn-img-next"})
+                },
+                getPanActions({
+                    directions: {
+                        "w": "up",
+                        "a": "left",
+                        "s": "down",
+                        "d": "right"
+                    },
+                    options: {
+                        // Distance each pan moves the viewport by
+                        // (relative to the zoom level).
+                        distance: 1 / 10,
+                        viewer: viewer
+                    }
+                })
+            )
+        });
+
+        // Update the item/page when the hash changes
+        $(window).on("hashchange", function () {
+            cudlViewerModel.setItemId(getItemId());
+            cudlViewerModel.setImageNumber(getPage());
+        });
+
+        // implement the global store.loadPage() method which is used by the
+        // metadata's anchor tags (via onclick attrs) to load pages.
+        window.store = {
+            loadPage: function loadPage(number) {
+                console.log("loading page via store.loadPage(", number, ")");
+                cudlViewerModel.setImageNumber(number);
+                return false;
+            }
+        };
+    }
+
+    // Expose ourself *gasp*
+    window.CudlViewer = {
+        initFromConfig: initFromConfig
     };
 });
