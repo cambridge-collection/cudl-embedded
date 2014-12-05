@@ -111,6 +111,9 @@ button[disabled], input[disabled] {
 .cudl-image-link {
 	position: relative;
 	font-style: italic;
+	/* Prevent breaking over multiple lines, as the dotted underline doesn't
+	   work then. */
+	white-space: nowrap;
 }
 .cudl-image-link:hover {
 	text-decoration: none;
