@@ -1206,6 +1206,118 @@ $(function() {
 
     });
 
+
+    var KeyboardShortcutHandler = extend(function KeyboardShortcutHandler(
+        options) {
+        KeyboardShortcutHandler.super.call(this, options);
+
+        this.actions = options.actions;
+        this.charCodeIndex = this.buildCharCodeIndex(this.actions);
+
+        this.$el.on("keypress", $.proxy(this.onKeypress, this));
+    }, View);
+    KeyboardShortcutHandler.DEFAULT_OPTIONS = {
+        actions: {}
+    }
+    $.extend(KeyboardShortcutHandler.prototype, {
+        buildCharCodeIndex: function buildCharCodeIndex(actions) {
+            var index = {};
+            for(var key in actions) {
+                if(key.length !== 1) {
+                    throw new Error("Invalid key binding: " + key);
+                }
+                index[key.charCodeAt(0)] = actions[key];
+            }
+            return index;
+        },
+
+        onKeypress: function onKeypress(e) {
+            var charCode = e.charCode;
+            if(!(charCode in this.charCodeIndex)) {
+                return;
+            }
+
+            this.charCodeIndex[charCode].trigger(e);
+        }
+    });
+
+
+    function Action(options) {}
+    $.extend(Action.prototype, {
+        trigger: function() { throw new Error("Not implemented"); }
+    });
+
+    var OSDAction = extend(function OSDAction(options) {
+        OSDAction.super.call(this, options);
+
+        if (!options.viewer) {
+            throw new Error("No viewer provided");
+        }
+
+        this.viewer = options.viewer;
+    }, Action);
+    $.extend(OSDAction.prototype, {
+        getViewer: function getViewer() {
+            return this.viewer;
+        },
+
+        getViewport: function getViewport() {
+            return this.getViewer().viewport;
+        },
+
+        hasViewport: function hasViewport() {
+            return !!this.getViewport();
+        }
+    });
+
+
+    /**
+     * An Action which pans an OpenSeadragon Viewer when triggered.
+     *
+     * @param options
+     * @constructor
+     */
+    var OSDPanAction = extend(function OSDPanAction(options) {
+        OSDPanAction.super.call(this, options);
+
+        this.directionName = options.direction;
+        this.panDistance = options.distance;
+        this.directionVector = options.directionVector ||
+            this.directionVectorFromDirection(
+                this.directionName, this.panDistance);
+    }, OSDAction);
+    OSDPanAction.DEFAULT_OPTIONS = {};
+    $.extend(OSDPanAction.prototype, {
+        directionVectorFromDirection: function directionVectorFromDirection(
+            directionName, panDistance) {
+            var x, y;
+            if(directionName === "left") { x = -1, y = 0; }
+            else if(directionName === "right") { x = 1, y = 0; }
+            else if(directionName === "up") { x = 0, y = -1; }
+            else if(directionName === "down") { x = 0, y = 1; }
+            else { throw new Error("Unknown direction: " + directionName); }
+
+            return new OpenSeadragon.Point(x, y).times(panDistance);
+        },
+
+        getDirectionVector: function getDirectionVector() {
+            return this.directionVector;
+        },
+
+        getPanDelta: function getPanDelta() {
+            var zoom = this.getViewport().getZoom();
+            return this.getDirectionVector().divide(zoom);
+        },
+
+        trigger: function trigger() {
+            if(!this.hasViewport()) {
+                return;
+            }
+
+            this.getViewport().panBy(this.getPanDelta());
+        }
+    });
+
     function reportError(options) {
         options = options || {};
         var error = new CudlErrorView(options);
@@ -1303,6 +1415,41 @@ $(function() {
     var pageTitleView = new CudlPageTitleView({
         el: $("head title")[0],
         viewerModel: cudlViewerModel
+    });
+
+    function getPanActions(options) {
+        var actions = {};
+
+        for(var key in options.directions) {
+            var direction = options.directions[key];
+            var actionOptions = $.extend(
+                {}, options.options, {direction: direction});
+            actions[key] = new OSDPanAction(actionOptions);
+        }
+
+        return actions;
+    }
+
+    // Keyboard shortcuts
+    var keyboardShortcutHandler = new KeyboardShortcutHandler({
+        el: document.body,
+        actions: $.extend(
+            {},
+            getPanActions({
+                directions: {
+                    "w": "up",
+                    "a": "left",
+                    "s": "down",
+                    "d": "right"
+                },
+                options: {
+                    // Distance each pan moves the viewport by
+                    // (relative to the zoom level).
+                    distance: 1/10,
+                    viewer: viewerView.getViewer()
+                }
+            })
+        )
     });
 
     // Update the item/page when the hash changes
