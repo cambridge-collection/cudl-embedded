@@ -202,7 +202,7 @@ $(function() {
     }
 
 
-    var CudlErrorView = extend(function(options) {
+    var CudlErrorView = extend(function CudlErrorView(options) {
         CudlErrorView.super.call(this, options);
 
         options = $.extend({}, CudlErrorView.DEFAULT_OPTIONS, options);
@@ -213,6 +213,8 @@ $(function() {
         this.setEl($.parseHTML(options.template.text()));
         this.render();
         this.$el.on("click", ".cudl-btn-close", $.proxy(this.onClose, this));
+
+        $(document).trigger("cudl:dialog:opened", {dialog: this});
     }, View);
     CudlErrorView.DEFAULT_OPTIONS = {
         title: "Content could not be loaded",
@@ -232,6 +234,7 @@ $(function() {
         },
 
         onClose: function onClose() {
+            $(document).trigger("cudl:dialog:closed", {dialog: this});
             this.$el.detach();
         }
     });
@@ -741,7 +744,8 @@ $(function() {
                 this.stripInlineStyles,
                 this.autoSizeEmbededObjects,
                 $.proxy(this.fixCudlUrlReferences, this),
-                this.changeOnclickToJavascriptUri
+                this.changeOnclickToJavascriptUri,
+                this.makeExternalLinksTargetBlank
             ])(html);
         },
 
@@ -787,6 +791,15 @@ $(function() {
             html.find(anchors).addBack(anchors).each(function(_, a) {
                 a.href = cudlService.getAbsoluteUrl($(a).attr("href"));
             });
+            return html;
+        },
+
+        makeExternalLinksTargetBlank: function makeExternalLinksTargetBlank(
+            html) {
+
+            html = $(html);
+            var anchors = "a:not([href^='javascript:'])";
+            html.find(anchors).addBack(anchors).attr("target", "_blank");
             return html;
         },
 
@@ -949,11 +962,11 @@ $(function() {
 
         getMetadata: function getMetadata(id, jqxhrOut) {
             return this.getJsonMetadata(id, jqxhrOut)
-                .then($.proxy(this.metadataFromJson, this));
+                .then($.proxy(this.metadataFromJson, this, id));
         },
 
-        metadataFromJson: function metadataFromJson(json) {
-            return new CudlMetadata(json);
+        metadataFromJson: function metadataFromJson(id, json) {
+            return new CudlMetadata(id, json);
         },
 
         getAbsoluteUrl: function getAbsoluteUrl(path) {
@@ -962,7 +975,8 @@ $(function() {
         }
     });
 
-    function CudlMetadata(json) {
+    function CudlMetadata(id, json) {
+        this.id = id;
         this.json = json;
         this.descriptionMetadataIndex =
             this.indexDescriptionMetadata(this.json);
@@ -975,6 +989,10 @@ $(function() {
                 index[descs[i].ID] = descs[i];
             }
             return index;
+        },
+
+        getId: function getId() {
+            return this.id;
         },
 
         isEmbeddable: function() {
@@ -1291,6 +1309,12 @@ $(function() {
                 return;
             }
 
+            // Alert others that a shortcut has occurred
+            $(this).trigger("shortcut", {
+                charCode: charCode,
+                character: String.fromCharCode(charCode),
+                action: this.charCodeIndex[charCode]
+            });
             this.charCodeIndex[charCode].trigger(e);
         }
     });
@@ -1298,7 +1322,13 @@ $(function() {
 
     function Action(options) {}
     $.extend(Action.prototype, {
-        trigger: function() { throw new Error("Not implemented"); }
+        trigger: function() { throw new Error("Not implemented"); },
+
+        getLabel: function getLabel() {
+            return this.label;
+        },
+
+        label: "Action"
     });
 
     var OSDAction = extend(function OSDAction(options) {
@@ -1341,6 +1371,9 @@ $(function() {
         this.directionVector = options.directionVector ||
             this.directionVectorFromDirection(
                 this.directionName, this.panDistance);
+
+        this.label = "pan " + (this.directionName ||
+                "by " + this.directionVector);
     }, OSDAction);
     OSDPanAction.DEFAULT_OPTIONS = {
         direction: "right",
@@ -1386,6 +1419,8 @@ $(function() {
         this.delta = options.delta || this.calculateDelta(
             options.direction, options.amount);
 
+        this.label = "zoom " + (options.direction || "by " + this.amount);
+
     }, OSDAction);
     OSDZoomAction.DEFAULT_OPTIONS = {
         delta: null,
@@ -1425,6 +1460,10 @@ $(function() {
 
         this.delta = options.delta || this.calculateDelta(
             options.direction, options.amount);
+
+        this.label = "rotate " +
+            (this.delta < 0 ? "left" : "right") +
+            " by " + Math.abs(this.delta) + "°";
 
     }, OSDAction);
     OSDRotateAction.DEFAULT_OPTIONS = {
@@ -1469,11 +1508,13 @@ $(function() {
             console.warning(
                 "No button elements will be pressed by this action.");
         }
+
+        this.label = "click button: " + options.button;
     }, Action);
     ButtonPressAction.DEFAULT_OPTIONS = {};
     $.extend(ButtonPressAction.prototype, {
         trigger: function trigger() {
-            $(this.button).click();
+            $(this.button).trigger("click", {fromShortcut: true});
         }
     });
 
@@ -1544,11 +1585,207 @@ $(function() {
         return actions;
     }
 
+    function AccumulatingEventReporter(options) {
+        this.delay = options.delay;
+
+        this.events = {};
+        this.timeoutId = null;
+
+        // Always proxy reportEvents to avoid doing it every time we schedule it
+        this.reportEvents = $.proxy(this.reportEvents, this);
+        // Proxy addEvent for client convenice
+        this.addEvent = $.proxy(this.addEvent, this);
+    }
+    $.extend(AccumulatingEventReporter.prototype, {
+        makeKey: function makeKey(category, action, label) {
+            return [category, action, label].join(",");
+        },
+
+        addEvent: function addEvent(category, action, label) {
+            var key = this.makeKey(category, action, label);
+            var val = this.events[key];
+            if(val === undefined) {
+                val = {
+                    category: category,
+                    action: action,
+                    label: label,
+                    count: 0
+                };
+                this.events[key] = val;
+            }
+            val.count++;
+            this.scheduleReport();
+        },
+
+        scheduleReport: function scheduleReport() {
+            if(this.timeoutId) {
+                clearTimeout(this.timeoutId);
+            }
+            this.timeoutId = setTimeout(this.reportEvents, this.delay);
+        },
+
+        reportEvents: function reportEvents() {
+            for(var i in this.events) {
+                var event = this.events[i];
+
+                ga("send", "event", event.category, event.action,
+                    event.label, event.count);
+            }
+            this.events = {};
+        }
+    });
+
+    function gaTrackButtonClicks(eventReporter) {
+        $(document).on("click", ".cudl-btn", function(e, params) {
+            // Don't report button click events which are created from shortcut
+            // key actions.
+            if(params && params.fromShortcut === true) {
+                return;
+            }
+
+            var btn = $(e.currentTarget);
+            var label = btn.data("ga-label");
+            if(!label) {
+                var classes = btn.prop("class").split(/\s+/);
+                var cudlName = classes.filter(function(x) {
+                    return /^cudl-btn-.*$/.test(x);
+                })
+                if(cudlName.length) {
+                    label = cudlName[0];
+                }
+            }
+
+            if(!label) {
+                console.warn("No GA label available for:", e.target);
+
+            }
+            else {
+                eventReporter("Buttons", "Clicked", label);
+            }
+        });
+    }
+
+    function gaTrackShortcuts(keyboardShortcutHandler, eventReporter) {
+        $(keyboardShortcutHandler).on("shortcut", function(_, params) {
+            var char = params.character;
+            var action = params.action;
+
+            var label = char + ": " + action.getLabel();
+            eventReporter("Shortcuts", "Used", label);
+        });
+    }
+
+    function gaTrackImageNumberInput() {
+        $(document).on("change", ".cudl-img-number", function(e) {
+            ga("send", "event", "Form Fields", "Changed", "cudl-img-number");
+        });
+    }
+
+    function gaTrackShortcutsHelp(eventReporter) {
+        $(document).on("click", ".cudl-toggle-shortcuts", function() {
+            // Not strictly a button, but meh.
+            eventReporter("Buttons", "Clicked", "cudl-toggle-shortcuts");
+        });
+    }
+
+    function gaTrackMetadataLinkClicks() {
+        $(document).on("click", ".cudl-viewer-metadata a", function(e) {
+            var a = $(e.currentTarget);
+            if(a.is(".cudl-image-link")) {
+                ga("send", "event", "Links", "Clicked", "Metadata Internal");
+            }
+            else {
+                ga("send", "event", "Links", "Clicked", "Metadata External");
+                ga("send", "event", "URLs", "Navigated To", a.prop("href"));
+            }
+        });
+    }
+
+    function gaTrackMetadataChange(cudlViewerModel) {
+        $(cudlViewerModel).on("change:metadata", function() {
+            var metadata = cudlViewerModel.getMetadata();
+            var location = window.location +
+                "/" + encodeURIComponent(metadata.getId());
+            ga("set", {
+                page: location
+            });
+            ga("send", "pageview");
+        });
+    }
+
+    function gaTrackImageChange(cudlViewerModel) {
+        $(cudlViewerModel).on("change:imageNumber", function() {
+            var metadata = cudlViewerModel.getMetadata();
+            var imageNumber = cudlViewerModel.getImageNumber();
+
+            var location = window.location +
+                "/" + encodeURIComponent(metadata.getId()) +
+                "/" + encodeURIComponent(imageNumber);
+            ga("set", {
+                page: location
+            });
+            ga("send", "pageview");
+        });
+    }
+
+    function gaTrackGlobalErrors() {
+        var prev = window.onerror;
+        window.onerror = function(message, url, lineNum, columnNum, error) {
+            var msg = url + ":" + lineNum + ":" + columnNum + " - " + message;
+
+            ga("send", "exception", {
+                exDescription: msg,
+                // Must be seeing as we're the global exception handler
+                exFatal: true
+            });
+
+            // Call the previously set handler, if any
+            if($.isFunction(prev)) {
+                return prev.apply(this, arguments);
+            }
+            else {
+                return false;
+            }
+        }
+    }
+
+    function gaTrackAjaxErrors() {
+        $(document).ajaxError(
+            function(event, jqxhr, ajaxSettings, thrownError) {
+
+            var url = $("a").attr("href", ajaxSettings.url).prop("href");
+            var label = ajaxSettings.type + " " + url + " " + jqxhr.status +
+                " " + thrownError;
+            ga("send", "event", "Ajax Requests", "Failed", label);
+        })
+    }
+
+    function gaTrackErrorDialog() {
+        $(document).on("cudl:dialog:opened cudl:dialog:closed",
+            function(e, params) {
+
+            var action = e.type === "cudl:dialog:opened" ? "Opened" : "Closed";
+            var dialog = params.dialog;
+            var label = dialog.title;
+            ga("send", "event", "Error Dialogs", action, label);
+        });
+    }
+
     function initFromConfig(config) {
 
         if(config.googleAnalyticsTrackingId) {
-            ga('create', config.googleAnalyticsTrackingId, 'auto');
-            ga('send', 'pageview');
+            ga("create", config.googleAnalyticsTrackingId, "auto");
+            ga("send", "pageview");
+
+            gaTrackGlobalErrors();
+            var delayedEventReporter = new AccumulatingEventReporter(
+                {delay: 5000}).addEvent;
+            gaTrackButtonClicks(delayedEventReporter);
+            gaTrackImageNumberInput();
+            gaTrackShortcutsHelp(delayedEventReporter);
+            gaTrackMetadataLinkClicks();
+            gaTrackAjaxErrors();
+            gaTrackErrorDialog();
         }
 
         var cudlService = new CudlService({
@@ -1566,6 +1803,8 @@ $(function() {
                 "change:loading": onLoadingChange
             }
         });
+        gaTrackMetadataChange(cudlViewerModel);
+        gaTrackImageChange(cudlViewerModel);
 
         var viewerView = new CudlViewerView({
             el: $(".cudl-viewer-player")[0],
@@ -1663,6 +1902,7 @@ $(function() {
                 })
             )
         });
+        gaTrackShortcuts(keyboardShortcutHandler, delayedEventReporter);
 
         // Update the item/page when the hash changes
         $(window).on("hashchange", function () {
