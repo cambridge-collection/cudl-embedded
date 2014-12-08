@@ -969,8 +969,10 @@ $(function() {
             return new CudlMetadata(id, json);
         },
 
-        getAbsoluteUrl: function getAbsoluteUrl(path) {
-            this.urlManipulator.pathname = path;
+        getAbsoluteUrl: function getAbsoluteUrl(pathAndSearch) {
+            var url = $("<a>").prop("href", pathAndSearch)[0];
+            this.urlManipulator.pathname = url.pathname;
+            this.urlManipulator.search = url.search;
             return this.urlManipulator.href;
         }
     });
