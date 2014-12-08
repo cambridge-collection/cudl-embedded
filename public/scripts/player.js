@@ -1637,6 +1637,22 @@ $(function() {
         }
     });
 
+    // Custom GA dimensions.
+    // We track the URL of the page which has embedded us if we're in an iframe.
+    var DIMENSION_EMBEDDING_URL = "dimension1";
+
+    function gaTrackEmbeddingURL() {
+        var inIframe = parent !== window;
+        if(inIframe) {
+            // document.referrer is the embedding page on first page load in
+            // an iframe.
+            ga("set", DIMENSION_EMBEDDING_URL, document.referrer);
+            // Could think about using window.location.ancestorOrigins too, but
+            // only webkit supports it, and it only gives you domains rather
+            // than full URLs.
+        }
+    }
+
     function gaTrackButtonClicks(eventReporter) {
         $(document).on("click", ".cudl-btn", function(e, params) {
             // Don't report button click events which are created from shortcut
@@ -1794,6 +1810,7 @@ $(function() {
 
         if(config.googleAnalyticsTrackingId) {
             ga("create", config.googleAnalyticsTrackingId, "auto");
+            gaTrackEmbeddingURL();
             ga("send", "pageview");
 
             gaTrackGlobalErrors();
