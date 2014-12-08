@@ -1688,15 +1688,32 @@ $(function() {
         });
     }
 
-    function gaTrackMetadataLinkClicks() {
-        $(document).on("click", ".cudl-viewer-metadata a", function(e) {
+    function gaTrackLinkClicks() {
+        $(document).on("click", "a", function(e) {
             var a = $(e.currentTarget);
+            var category;
+
+            // Internal links to image numbers
             if(a.is(".cudl-image-link")) {
-                ga("send", "event", "Links", "Clicked", "Metadata Internal");
+                var match = /store.loadPage\((\d+)\)/.exec(a.prop("onclick"));
+                var label =  (match && match[1]) ||
+                    a.prop("onclick");
+                ga("send", "event", "Image Links", "Clicked", label);
             }
+            // External links
             else {
-                ga("send", "event", "Links", "Clicked", "Metadata External");
-                ga("send", "event", "URLs", "Navigated To", a.prop("href"));
+                var label = a.prop("href") +
+                    " " + (a.prop("title") || a.text());
+
+                // Check if the link is in the metadata, or the general UI
+                if(a.is(".cudl-viewer-metadata a")) {
+                    category = "Metadata Links";
+                }
+                else {
+                    category = "UI Links";
+                }
+
+                ga("send", "event", category, "Clicked", label);
             }
         });
     }
@@ -1783,7 +1800,7 @@ $(function() {
             gaTrackButtonClicks(delayedEventReporter);
             gaTrackImageNumberInput();
             gaTrackShortcutsHelp(delayedEventReporter);
-            gaTrackMetadataLinkClicks();
+            gaTrackLinkClicks();
             gaTrackAjaxErrors();
             gaTrackErrorDialog();
         }
