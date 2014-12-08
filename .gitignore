@@ -5,3 +5,6 @@
 *.swp
 *.out
 *.svn
+
+## Dependencies
+node_modules/
