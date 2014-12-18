@@ -1,4 +1,4 @@
-/* Modernizr 2.8.3 (Custom Build) | MIT & BSD
+/*! Modernizr 2.8.3 (Custom Build) | MIT & BSD
  * Build: http://modernizr.com/download/#-cssanimations-cssclasses-testprop-testallprops-domprefixes-cors-css_pointerevents
  */
 ;
