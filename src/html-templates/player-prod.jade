@@ -1,0 +1,13 @@
+extends ./player.jade
+
+block versionInfo
+    <!-- #{versionInfo} -->
+
+block config
+    != viewerSettings
+
+block javascript
+    script(type="text/javascript")!= minifiedJavascript
+
+block css
+    style(type="text/css")!= minifiedCss
