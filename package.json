@@ -1,6 +1,6 @@
 {
   "name": "cudl-embedded",
-  "version": "0.0.0-snapshot",
+  "version": "0.0.0",
   "description": "The embeddable item viewer for cudl.lib.cam.ac.uk",
   "main": "index.js",
   "directories": {
