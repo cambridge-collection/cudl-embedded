@@ -437,7 +437,6 @@ button[disabled], input[disabled] {
 		/* Slide the sidebar off screen. */
 		-ms-transform: translate(304px, 0px);
 		-webkit-transform: translate(304px, 0px);
-		-moz-transform: translate(304px, 0px);
 		transform: translate(304px, 0px);
 	}
 
@@ -455,11 +454,10 @@ button[disabled], input[disabled] {
 		border-top: none;
 
 		-ms-transform: rotate(90deg);
+		-webkit-transform: rotate(90deg);
 		transform: rotate(90deg);
 
-		-moz-transform-origin: 0 0;
 		-ms-transform-origin: 0 0;
-		-o-transform-origin: 0 0;
 		-webkit-transform-origin: 0 0;
 		transform-origin: 0 0;
 
@@ -536,9 +534,13 @@ button[disabled], input[disabled] {
 	.cudl-metadata-toggle-btn {
 		top: 0;
 		right: 25%;
+		
 		transform-origin: bottom left;
+		-webkit-transform-origin: bottom left;
 		-ms-transform-origin: bottom left;
+		
 		transform: translateY(-100%);
+		-webkit-transform: translateY(-100%);
 		-ms-transform: translateY(-100%);
 
 		border-radius: 3px 3px 0px 0px;
@@ -663,14 +665,32 @@ button[disabled], input[disabled] {
 }
 
 @-webkit-keyframes loading-ball {
-	from { transform: scale(0.1); }
-	20% { transform: scale(1); }
-	to { transform: scale(0.1); }
+	from {
+		transform: scale(0.1);
+		-webkit-transform: scale(0.1);
+	}
+	20% {
+		transform: scale(1);
+		-webkit-transform: scale(1);
+	}
+	to {
+		transform: scale(0.1);
+		-webkit-transform: scale(0.1);
+	}
 }
 @keyframes loading-ball {
-	from { transform: scale(0.1); }
-	20% { transform: scale(1); }
-	to { transform: scale(0.1); }
+	from {
+		transform: scale(0.1);
+		-webkit-transform: scale(0.1);
+	}
+	20% {
+		transform: scale(1);
+		-webkit-transform: scale(1);
+	}
+	to {
+		transform: scale(0.1);
+		-webkit-transform: scale(0.1);
+	}
 }
 
 /* Fallback for IE9 which doesn't support animations: hide the bouncy balls
