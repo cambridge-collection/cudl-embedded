@@ -1103,6 +1103,10 @@ $(function() {
             $(this).trigger("change:itemId");
         },
 
+        getItemId: function getItemId() {
+            return this.itemId;
+        },
+
         _loadMetadata: function _loadMetadata() {
             this.bumpLoadingCount(1);
             var self = this;
@@ -1139,7 +1143,11 @@ $(function() {
 
             var body, bodyHtml, title;
             var status = details.xhr.status;
-            if(status == 404) {
+            if(status == 403) {
+                reportUnembeddableItem(this);
+                return;
+            }
+            else if(status == 404) {
                 title = "Item not found";
                 bodyHtml = "The item “<code>" + escapeAsHtml(itemId) +
                 "</code>” does not exist";
@@ -1535,9 +1543,13 @@ $(function() {
 
         var template = $("#cudl-error-no-embed-template").text();
         var bodyHtml = $($.parseHTML(template));
-        bodyHtml.find("em").text("“" + metadata.getTitle() + "”");
+        var itemName = viewerModel.getItemId();
+        if(metadata) {
+            itemName = metadata.getTitle();
+        }
+        bodyHtml.find("em").text("“" + itemName + "”");
         bodyHtml.find("a").attr("href", viewerModel.getItemCudlUrl());
-        bodyHtml.find("a").attr("title", metadata.getTitle());
+        bodyHtml.find("a").attr("title", itemName);
 
         reportError({
             title: "Item cannot be embedded",
