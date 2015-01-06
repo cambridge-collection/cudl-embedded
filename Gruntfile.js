@@ -1,3 +1,5 @@
+var url = require("url");
+
 module.exports = function(grunt) {
     grunt.config.init({
         pkg: grunt.file.readJSON("package.json"),
@@ -33,9 +35,9 @@ module.exports = function(grunt) {
                 },
                 files: {
                     "build/player/player.min.css": [
-                        "build/font-awesome/font-awesome.css",
+                        "build/css-url-rewrite/font-awesome.css",
                         "src/lib/normalize.css",
-                        "src/stylesheets/player.css"
+                        "build/css-url-rewrite/player.css"
                     ]
                 }
             }
@@ -104,18 +106,6 @@ module.exports = function(grunt) {
                         dest: "build/player/"
                     }
                 ]
-            },
-
-            // Change the path that fontawesome uses to point to its font files
-            "font-awesome-font-path": {
-                nonull: true,
-                expand: true,
-                cwd: "src/lib/font-awesome/css/",
-                src: ["font-awesome.css"],
-                dest: "build/font-awesome/",
-                options: {
-                    process: fixFontAwesomeFontPaths
-                }
             }
         },
 
@@ -125,8 +115,40 @@ module.exports = function(grunt) {
                     jshintrc: true
                 },
                 files: {
-                    src: ["src/scripts/*.js"]
+                    src: ["src/scripts/*.js", "bin/devserver.js"]
                 }
+            }
+        },
+
+        // Rewrite the relative urls in the CSS so that they are relative to
+        // the src directory. When the CSS gets embedded into the player HTML,
+        // it's effectively at the same location as the src directory.
+        cssUrlRewrite: {
+            player: {
+                options: {
+                    rewriteUrl: function(path) {
+                        // Path is relative to the project root. We need to make
+                        // it relative to ./src/, as src contains the static files
+                        // which we serve up.
+                        return /^src\/(.*)$/.exec(path)[1];
+                    }
+                },
+                src: "src/stylesheets/player.css",
+                dest: "build/css-url-rewrite/player.css"
+            },
+            fontawesome: {
+                options: {
+                    rewriteUrl: function(path) {
+                        // Font-Awesome fonts are moved into ./fonts/* after
+                        // building, so we need to point fontawesome's urls
+                        // there.
+                        var fontFile = /^src\/lib\/font-awesome\/fonts\/(.*)$/
+                            .exec(path)[1];
+                        return url.resolve("fonts/", fontFile);
+                    }
+                },
+                src: "src/lib/font-awesome/css/font-awesome.css",
+                dest: "build/css-url-rewrite/font-awesome.css"
             }
         }
     });
@@ -139,11 +161,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-serve");
     grunt.loadNpmTasks("grunt-contrib-jshint");
+    grunt.loadNpmTasks("grunt-css-url-rewrite");
 
     // Define our task aliases. The "player" task is the top-level task which
     // should be run normally.
     grunt.registerTask("default", ["player"]);
-    grunt.registerTask("css", ["copy:font-awesome-font-path", "cssmin:player"]);
+    grunt.registerTask("css", ["cssUrlRewrite", "cssmin:player"]);
     grunt.registerTask("player", [
         "clean", "jshint:player", "css", "uglify:player", "jade:player",
         "copy:player"
@@ -166,10 +189,5 @@ module.exports = function(grunt) {
     function willBreakTag(tagName, text) {
         var regex = new RegExp("<\/" + tagName);
         return regex.test(text);
-    }
-
-    function fixFontAwesomeFontPaths(content) {
-        // Change ../fonts/ to fonts/
-        return content.replace(/url\('\.\.\/fonts\//g, "url('fonts/");
     }
 };

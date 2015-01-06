@@ -13,23 +13,23 @@ html {
 /* Custom fonts */
 @font-face {
     font-family: CharisSILW;
-    src: url("fonts/CharisSIL-R.woff");
+    src: url("../fonts/CharisSIL-R.woff");
 }
 @font-face {
     font-family: CharisSILW;
     font-style: italic;
-    src: url("fonts/CharisSIL-I.woff");
+    src: url("../fonts/CharisSIL-I.woff");
 }
 @font-face {
     font-family: CharisSILW;
     font-weight: bold;
-    src: url("fonts/CharisSIL-B.woff");
+    src: url("../fonts/CharisSIL-B.woff");
 }
 @font-face {
     font-family: CharisSILW;
     font-weight: bold;
     font-style: italic;
-    src: url("fonts/CharisSIL-BI.woff");
+    src: url("../fonts/CharisSIL-BI.woff");
 }
 
 

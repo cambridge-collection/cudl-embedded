@@ -6,16 +6,16 @@ html
         meta(name="viewport", content="initial-scale=1")
         meta(charset="utf-8")
         block css
-            link(rel='stylesheet', href='/lib/normalize.css')
-            link(rel='stylesheet', href='/stylesheets/player.css')
-            link(rel='stylesheet', href='/lib/font-awesome/css/font-awesome.css')
+            link(rel='stylesheet', href='lib/normalize.css')
+            link(rel='stylesheet', href='stylesheets/player.css')
+            link(rel='stylesheet', href='lib/font-awesome/css/font-awesome.css')
         block javascript
             script(type="text/javascript", src="lib/google-analytics.js")
             script(type='text/javascript' src="lib/modernizr.custom.js")
             script(type='text/javascript' src="lib/openseadragon/openseadragon.js")
             script(type='text/javascript' src="lib/jquery.js")
-            script(type='text/javascript', src='/scripts/player.js')
-            script(type='text/javascript', src='/scripts/init.js')
+            script(type='text/javascript', src='scripts/player.js')
+            script(type='text/javascript', src='scripts/init.js')
         script#cudl-metadata-template(type='text/html').
             <h1 class="cudl-metadata-title"><a title="View this item on the Cambridge University Digital Library" target="_blank"></a></h1>
             <h2 class="cudl-metadata-summary"></h2>
@@ -37,11 +37,11 @@ html
         script#config(type="application/json")
             block config
                 | {
-                |     googleAnalyticsTrackingId: "UA-57174577-1",
-                |     metadataUrlPrefix: "/v1/metadata/json/",
-                |     metadataUrlSuffix: "",
-                |     dziUrlPrefix: "http://cudl.lib.cam.ac.uk",
-                |     metadataUrlHost: "//cudl.lib.cam.ac.uk:80"
+                |     "googleAnalyticsTrackingId": "UA-57174577-1",
+                |     "metadataUrlPrefix": "http://cudltest.localhost:3000/v1/metadata/json/",
+                |     "metadataUrlSuffix": "",
+                |     "dziUrlPrefix": "http://cudl.lib.cam.ac.uk",
+                |     "metadataUrlHost": "//cudl.lib.cam.ac.uk:80"
                 | }
     body.cudl-viewer.loading
             header
