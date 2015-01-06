@@ -730,7 +730,8 @@ $(function() {
             }
 
             $el.find(".cudl-metadata-title a").text(md.getTitle());
-            $el.find(".cudl-metadata-title a").attr("href", this.viewerModel.getItemCudlUrl());
+            $el.find(".cudl-metadata-title a")
+                .attr("href", this.viewerModel.getItemCudlUrl());
             $el.find(".cudl-metadata-summary").append(this.renderSummary());
             $el.find(".cudl-metadata-abstract").html(abstract);
             $el.find(".cudl-copyright-statement")
@@ -885,7 +886,8 @@ $(function() {
         },
 
         getPageTitle: function getPageTitle(itemTitle) {
-            return itemTitle + " - Cambridge University Digital Library Embedded Viewer"
+            return itemTitle +
+                " - Cambridge University Digital Library Embedded Viewer";
         }
     });
 
@@ -1113,7 +1115,8 @@ $(function() {
             // Obtain a reference to the jqxhr backing the metadata promise so
             // that we can abort it if required.
             var jqxhrOut = [];
-            var futureMetadata = this.cudlService.getMetadata(this.itemId, jqxhrOut);
+            var futureMetadata = this.cudlService
+                .getMetadata(this.itemId, jqxhrOut);
 
             futureMetadata.done(
                 $.proxy(this.onMetadataAvailable, this, this.itemId));
@@ -1222,7 +1225,8 @@ $(function() {
                 var dzi = new OpenSeadragon.DziTileSource();
                 if(!dzi.supports(data)) {
                     // Reject the returned promise
-                    return $.Deferred().reject("Unable to interpret data as a a DZI", data);
+                    return $.Deferred()
+                        .reject("Unable to interpret data as a a DZI", data);
                 }
                 return dzi.configure(data, url);
             }, function(jqxhr, textStatus, errorThrown) {
@@ -1275,7 +1279,8 @@ $(function() {
         },
 
         getItemCudlUrl: function getItemCudlUrl() {
-            return "http://cudl.lib.cam.ac.uk/view/" + encodeURIComponent(this.itemId);
+            return "http://cudl.lib.cam.ac.uk/view/" +
+                encodeURIComponent(this.itemId);
         }
 
     });
@@ -1916,8 +1921,12 @@ $(function() {
                         viewer: viewer
                     }),
 
-                    "r": new ButtonPressAction({button: ".cudl-metadata-toggle-btn"}),
-                    "f": new ButtonPressAction({button: ".cudl-btn-fullscreen"}),
+                    "r": new ButtonPressAction({
+                        button: ".cudl-metadata-toggle-btn"
+                    }),
+                    "f": new ButtonPressAction({
+                        button: ".cudl-btn-fullscreen"
+                    }),
 
                     "c": new ButtonPressAction({button: ".cudl-btn-img-prev"}),
                     "v": new ButtonPressAction({button: ".cudl-btn-img-next"})
