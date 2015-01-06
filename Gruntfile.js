@@ -117,6 +117,17 @@ module.exports = function(grunt) {
                     process: fixFontAwesomeFontPaths
                 }
             }
+        },
+
+        jshint: {
+            player: {
+                options: {
+                    jshintrc: true
+                },
+                files: {
+                    src: ["src/scripts/*.js"]
+                }
+            }
         }
     });
 
@@ -127,13 +138,14 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-jade");
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-serve");
+    grunt.loadNpmTasks("grunt-contrib-jshint");
 
     // Define our task aliases. The "player" task is the top-level task which
     // should be run normally.
     grunt.registerTask("default", ["player"]);
     grunt.registerTask("css", ["copy:font-awesome-font-path", "cssmin:player"]);
     grunt.registerTask("player", [
-        "clean", "css", "uglify:player", "jade:player",
+        "clean", "jshint:player", "css", "uglify:player", "jade:player",
         "copy:player"
     ]);
     grunt.registerTask("player-custom-config",

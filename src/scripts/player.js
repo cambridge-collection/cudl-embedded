@@ -11,7 +11,7 @@ $(function() {
         var start = Date.now();
         return function now() {
             return Date.now() - start;
-        }
+        };
     })();
 
     var isSameOrigin = (function() {
@@ -67,7 +67,7 @@ $(function() {
             }
             return result[0];
         };
-    };
+    }
 
     function XDomainRequestAjaxTransport(options, jqXHR) {
         this.options = options;
@@ -272,7 +272,7 @@ $(function() {
         },
 
         getFirstMethod: function getFirstMethod(obj, methods, _default) {
-            for(i in methods) {
+            for(var i in methods) {
                 var method = obj[methods[i]];
                 if($.isFunction(method)) {
                     return method;
@@ -429,7 +429,7 @@ $(function() {
             var viewer = this.viewerView.getViewer();
             var viewport = viewer.viewport;
 
-            if(viewport == null)
+            if(viewport === null)
                 return;
 
             viewport.setRotation(viewport.getRotation() + 90 * direction);
@@ -1091,7 +1091,7 @@ $(function() {
     $.extend(CudlViewerModel.prototype, {
 
         setItemId: function setItemId(id) {
-            if(!$.type(id) === "string") {
+            if($.type(id) !== "string") {
                 throw new Error("id must be a string, got: " + id);
             }
             if(this.itemId === id) {
@@ -1297,7 +1297,7 @@ $(function() {
     }, View);
     KeyboardShortcutHandler.DEFAULT_OPTIONS = {
         actions: {}
-    }
+    };
     $.extend(KeyboardShortcutHandler.prototype, {
         buildCharCodeIndex: function buildCharCodeIndex(actions) {
             var index = {};
@@ -1391,10 +1391,10 @@ $(function() {
         directionVectorFromDirection: function directionVectorFromDirection(
             directionName, panDistance) {
             var x, y;
-            if(directionName === "left") { x = -1, y = 0; }
-            else if(directionName === "right") { x = 1, y = 0; }
-            else if(directionName === "up") { x = 0, y = -1; }
-            else if(directionName === "down") { x = 0, y = 1; }
+            if(directionName === "left") { x = -1; y = 0; }
+            else if(directionName === "right") { x = 1; y = 0; }
+            else if(directionName === "up") { x = 0; y = -1; }
+            else if(directionName === "down") { x = 0; y = 1; }
             else { throw new Error("Unknown direction: " + directionName); }
 
             return new OpenSeadragon.Point(x, y).times(panDistance);
@@ -1672,7 +1672,7 @@ $(function() {
                 var classes = btn.prop("class").split(/\s+/);
                 var cudlName = classes.filter(function(x) {
                     return /^cudl-btn-.*$/.test(x);
-                })
+                });
                 if(cudlName.length) {
                     label = cudlName[0];
                 }
@@ -1713,20 +1713,20 @@ $(function() {
 
     function gaTrackLinkClicks() {
         $(document).on("click", "a", function(e) {
+            var label;
             var a = $(e.currentTarget);
             var category;
 
             // Internal links to image numbers
             if(a.is(".cudl-image-link")) {
                 var match = /store.loadPage\((\d+)\)/.exec(a.prop("onclick"));
-                var label =  (match && match[1]) ||
+                label =  (match && match[1]) ||
                     a.prop("onclick");
                 ga("send", "event", "Image Links", "Clicked", label);
             }
             // External links
             else {
-                var label = a.prop("href") +
-                    " " + (a.prop("title") || a.text());
+                label = a.prop("href") + " " + (a.prop("title") || a.text());
 
                 // Check if the link is in the metadata, or the general UI
                 if(a.is(".cudl-viewer-metadata a")) {
@@ -1786,7 +1786,7 @@ $(function() {
             else {
                 return false;
             }
-        }
+        };
     }
 
     function gaTrackAjaxErrors() {
@@ -1797,7 +1797,7 @@ $(function() {
             var label = ajaxSettings.type + " " + url + " " + jqxhr.status +
                 " " + thrownError;
             ga("send", "event", "Ajax Requests", "Failed", label);
-        })
+        });
     }
 
     function gaTrackErrorDialog() {
@@ -1815,19 +1815,20 @@ $(function() {
 
         if(config.googleAnalyticsTrackingId) {
             ga("create", config.googleAnalyticsTrackingId, "auto");
-            gaTrackEmbeddingURL();
-            ga("send", "pageview");
-
-            gaTrackGlobalErrors();
-            var delayedEventReporter = new AccumulatingEventReporter(
-                {delay: 5000}).addEvent;
-            gaTrackButtonClicks(delayedEventReporter);
-            gaTrackImageNumberInput();
-            gaTrackShortcutsHelp(delayedEventReporter);
-            gaTrackLinkClicks();
-            gaTrackAjaxErrors();
-            gaTrackErrorDialog();
         }
+        gaTrackEmbeddingURL();
+        ga("send", "pageview");
+
+        gaTrackGlobalErrors();
+        var delayedEventReporter = new AccumulatingEventReporter(
+            {delay: 5000}).addEvent;
+        gaTrackButtonClicks(delayedEventReporter);
+        gaTrackImageNumberInput();
+        gaTrackShortcutsHelp(delayedEventReporter);
+        gaTrackLinkClicks();
+        gaTrackAjaxErrors();
+        gaTrackErrorDialog();
+
 
         var cudlService = new CudlService({
             metadataUrlPrefix: config.metadataUrlPrefix,
