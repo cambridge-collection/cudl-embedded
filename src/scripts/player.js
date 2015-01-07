@@ -716,8 +716,24 @@ $(function() {
     $.extend(CudlMetadataView.prototype, {
         onShowHideToggled: function onShowHideToggled(e) {
             ga("send", "event", "Metadata",
-                (this.$el.is(".hidden") ? "Opened" : "Closed"));
+                (this.isVisible() ? "Closed" : "Opened"));
             this.$el.toggleClass("hidden");
+        },
+
+        /**
+         * @param {Boolean} open true if the sidebar should be made open, false
+         *                  to close it.
+         */
+        setVisibility: function setVisibility(open) {
+            var isVisible = this.isVisible();
+            if(isVisible === open) {
+                return;
+            }
+            this.$el.toggleClass("hidden");
+        },
+
+        isVisible: function isVisible() {
+            return !this.$el.is(".hidden");
         },
 
         renderTemplate: function renderTemplate() {
@@ -1566,6 +1582,18 @@ $(function() {
         return parseInt(parseUriQuery(window.location.hash).page, 10) || 1;
     }
 
+    /**
+     * Checks the page's hash to see if the sidebar is hidden by default.
+     * @returns {boolean} true if the sidebar should be hidden
+     */
+    function isRequestedMetadataVisibilityHidden() {
+        return parseUriQuery(window.location.hash)["hide-info"] === "true";
+    }
+
+    function setMetadataVisibilityFromHash(metadataView) {
+        metadataView.setVisibility(!isRequestedMetadataVisibilityHidden());
+    }
+
     /* Show the loading indicator when we're making an requests. Note that
        this doesn't know about openseadragon's image loading. */
     function onLoadingChange(e) {
@@ -1966,7 +1994,11 @@ $(function() {
         $(window).on("hashchange", function () {
             cudlViewerModel.setItemId(getItemId());
             cudlViewerModel.setImageNumber(getPage());
+
+            setMetadataVisibilityFromHash(metadataView);
         });
+        // Catch the initial visibility value in the hash
+        setMetadataVisibilityFromHash(metadataView);
 
         // implement the global store.loadPage() method which is used by the
         // metadata's anchor tags (via onclick attrs) to load pages.
