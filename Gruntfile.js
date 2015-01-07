@@ -186,6 +186,15 @@ module.exports = function(grunt) {
         }
     }
 
+    /**
+     * Check if inserting text into a tag (which doesn't support HTML escaping)
+     * named tagName will break the markup. e.g. if text contains the closing
+     * tag.
+     * @param tagName The name of the containing tag, e.g. script, style
+     * @param text The text to be inserted
+     * @returns {boolean} false if the text can be inserted safely, false
+     *          otherwise.
+     */
     function willBreakTag(tagName, text) {
         var regex = new RegExp("<\/" + tagName);
         return regex.test(text);
