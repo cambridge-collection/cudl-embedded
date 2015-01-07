@@ -11,7 +11,7 @@ $(function() {
         var start = Date.now();
         return function now() {
             return Date.now() - start;
-        }
+        };
     })();
 
     var isSameOrigin = (function() {
@@ -67,7 +67,7 @@ $(function() {
             }
             return result[0];
         };
-    };
+    }
 
     function XDomainRequestAjaxTransport(options, jqXHR) {
         this.options = options;
@@ -272,7 +272,7 @@ $(function() {
         },
 
         getFirstMethod: function getFirstMethod(obj, methods, _default) {
-            for(i in methods) {
+            for(var i in methods) {
                 var method = obj[methods[i]];
                 if($.isFunction(method)) {
                     return method;
@@ -429,7 +429,7 @@ $(function() {
             var viewer = this.viewerView.getViewer();
             var viewport = viewer.viewport;
 
-            if(viewport == null)
+            if(viewport === null)
                 return;
 
             viewport.setRotation(viewport.getRotation() + 90 * direction);
@@ -716,8 +716,24 @@ $(function() {
     $.extend(CudlMetadataView.prototype, {
         onShowHideToggled: function onShowHideToggled(e) {
             ga("send", "event", "Metadata",
-                (this.$el.is(".hidden") ? "Opened" : "Closed"));
+                (this.isVisible() ? "Closed" : "Opened"));
             this.$el.toggleClass("hidden");
+        },
+
+        /**
+         * @param {Boolean} open true if the sidebar should be made open, false
+         *                  to close it.
+         */
+        setVisibility: function setVisibility(open) {
+            var isVisible = this.isVisible();
+            if(isVisible === open) {
+                return;
+            }
+            this.$el.toggleClass("hidden");
+        },
+
+        isVisible: function isVisible() {
+            return !this.$el.is(".hidden");
         },
 
         renderTemplate: function renderTemplate() {
@@ -730,7 +746,8 @@ $(function() {
             }
 
             $el.find(".cudl-metadata-title a").text(md.getTitle());
-            $el.find(".cudl-metadata-title a").attr("href", this.viewerModel.getItemCudlUrl());
+            $el.find(".cudl-metadata-title a")
+                .attr("href", this.viewerModel.getItemCudlUrl());
             $el.find(".cudl-metadata-summary").append(this.renderSummary());
             $el.find(".cudl-metadata-abstract").html(abstract);
             $el.find(".cudl-copyright-statement")
@@ -885,7 +902,8 @@ $(function() {
         },
 
         getPageTitle: function getPageTitle(itemTitle) {
-            return itemTitle + " - Cambridge University Digital Library Embedded Viewer"
+            return itemTitle +
+                " - Cambridge University Digital Library Embedded Viewer";
         }
     });
 
@@ -1089,7 +1107,7 @@ $(function() {
     $.extend(CudlViewerModel.prototype, {
 
         setItemId: function setItemId(id) {
-            if(!$.type(id) === "string") {
+            if($.type(id) !== "string") {
                 throw new Error("id must be a string, got: " + id);
             }
             if(this.itemId === id) {
@@ -1099,6 +1117,10 @@ $(function() {
             this.itemId = id;
             this._loadMetadata();
             $(this).trigger("change:itemId");
+        },
+
+        getItemId: function getItemId() {
+            return this.itemId;
         },
 
         _loadMetadata: function _loadMetadata() {
@@ -1113,7 +1135,8 @@ $(function() {
             // Obtain a reference to the jqxhr backing the metadata promise so
             // that we can abort it if required.
             var jqxhrOut = [];
-            var futureMetadata = this.cudlService.getMetadata(this.itemId, jqxhrOut);
+            var futureMetadata = this.cudlService
+                .getMetadata(this.itemId, jqxhrOut);
 
             futureMetadata.done(
                 $.proxy(this.onMetadataAvailable, this, this.itemId));
@@ -1136,7 +1159,11 @@ $(function() {
 
             var body, bodyHtml, title;
             var status = details.xhr.status;
-            if(status == 404) {
+            if(status == 403) {
+                reportUnembeddableItem(this);
+                return;
+            }
+            else if(status == 404) {
                 title = "Item not found";
                 bodyHtml = "The item “<code>" + escapeAsHtml(itemId) +
                 "</code>” does not exist";
@@ -1222,7 +1249,8 @@ $(function() {
                 var dzi = new OpenSeadragon.DziTileSource();
                 if(!dzi.supports(data)) {
                     // Reject the returned promise
-                    return $.Deferred().reject("Unable to interpret data as a a DZI", data);
+                    return $.Deferred()
+                        .reject("Unable to interpret data as a a DZI", data);
                 }
                 return dzi.configure(data, url);
             }, function(jqxhr, textStatus, errorThrown) {
@@ -1275,7 +1303,8 @@ $(function() {
         },
 
         getItemCudlUrl: function getItemCudlUrl() {
-            return "http://cudl.lib.cam.ac.uk/view/" + encodeURIComponent(this.itemId);
+            return "http://cudl.lib.cam.ac.uk/view/" +
+                encodeURIComponent(this.itemId);
         }
 
     });
@@ -1292,7 +1321,7 @@ $(function() {
     }, View);
     KeyboardShortcutHandler.DEFAULT_OPTIONS = {
         actions: {}
-    }
+    };
     $.extend(KeyboardShortcutHandler.prototype, {
         buildCharCodeIndex: function buildCharCodeIndex(actions) {
             var index = {};
@@ -1386,10 +1415,10 @@ $(function() {
         directionVectorFromDirection: function directionVectorFromDirection(
             directionName, panDistance) {
             var x, y;
-            if(directionName === "left") { x = -1, y = 0; }
-            else if(directionName === "right") { x = 1, y = 0; }
-            else if(directionName === "up") { x = 0, y = -1; }
-            else if(directionName === "down") { x = 0, y = 1; }
+            if(directionName === "left") { x = -1; y = 0; }
+            else if(directionName === "right") { x = 1; y = 0; }
+            else if(directionName === "up") { x = 0; y = -1; }
+            else if(directionName === "down") { x = 0; y = 1; }
             else { throw new Error("Unknown direction: " + directionName); }
 
             return new OpenSeadragon.Point(x, y).times(panDistance);
@@ -1530,9 +1559,13 @@ $(function() {
 
         var template = $("#cudl-error-no-embed-template").text();
         var bodyHtml = $($.parseHTML(template));
-        bodyHtml.find("em").text("“" + metadata.getTitle() + "”");
+        var itemName = viewerModel.getItemId();
+        if(metadata) {
+            itemName = metadata.getTitle();
+        }
+        bodyHtml.find("em").text("“" + itemName + "”");
         bodyHtml.find("a").attr("href", viewerModel.getItemCudlUrl());
-        bodyHtml.find("a").attr("title", metadata.getTitle());
+        bodyHtml.find("a").attr("title", itemName);
 
         reportError({
             title: "Item cannot be embedded",
@@ -1547,6 +1580,18 @@ $(function() {
 
     function getPage() {
         return parseInt(parseUriQuery(window.location.hash).page, 10) || 1;
+    }
+
+    /**
+     * Checks the page's hash to see if the sidebar is hidden by default.
+     * @returns {boolean} true if the sidebar should be hidden
+     */
+    function isRequestedMetadataVisibilityHidden() {
+        return parseUriQuery(window.location.hash)["hide-info"] === "true";
+    }
+
+    function setMetadataVisibilityFromHash(metadataView) {
+        metadataView.setVisibility(!isRequestedMetadataVisibilityHidden());
     }
 
     /* Show the loading indicator when we're making an requests. Note that
@@ -1667,7 +1712,7 @@ $(function() {
                 var classes = btn.prop("class").split(/\s+/);
                 var cudlName = classes.filter(function(x) {
                     return /^cudl-btn-.*$/.test(x);
-                })
+                });
                 if(cudlName.length) {
                     label = cudlName[0];
                 }
@@ -1708,20 +1753,20 @@ $(function() {
 
     function gaTrackLinkClicks() {
         $(document).on("click", "a", function(e) {
+            var label;
             var a = $(e.currentTarget);
             var category;
 
             // Internal links to image numbers
             if(a.is(".cudl-image-link")) {
                 var match = /store.loadPage\((\d+)\)/.exec(a.prop("onclick"));
-                var label =  (match && match[1]) ||
+                label =  (match && match[1]) ||
                     a.prop("onclick");
                 ga("send", "event", "Image Links", "Clicked", label);
             }
             // External links
             else {
-                var label = a.prop("href") +
-                    " " + (a.prop("title") || a.text());
+                label = a.prop("href") + " " + (a.prop("title") || a.text());
 
                 // Check if the link is in the metadata, or the general UI
                 if(a.is(".cudl-viewer-metadata a")) {
@@ -1781,7 +1826,7 @@ $(function() {
             else {
                 return false;
             }
-        }
+        };
     }
 
     function gaTrackAjaxErrors() {
@@ -1792,7 +1837,7 @@ $(function() {
             var label = ajaxSettings.type + " " + url + " " + jqxhr.status +
                 " " + thrownError;
             ga("send", "event", "Ajax Requests", "Failed", label);
-        })
+        });
     }
 
     function gaTrackErrorDialog() {
@@ -1810,19 +1855,20 @@ $(function() {
 
         if(config.googleAnalyticsTrackingId) {
             ga("create", config.googleAnalyticsTrackingId, "auto");
-            gaTrackEmbeddingURL();
-            ga("send", "pageview");
-
-            gaTrackGlobalErrors();
-            var delayedEventReporter = new AccumulatingEventReporter(
-                {delay: 5000}).addEvent;
-            gaTrackButtonClicks(delayedEventReporter);
-            gaTrackImageNumberInput();
-            gaTrackShortcutsHelp(delayedEventReporter);
-            gaTrackLinkClicks();
-            gaTrackAjaxErrors();
-            gaTrackErrorDialog();
         }
+        gaTrackEmbeddingURL();
+        ga("send", "pageview");
+
+        gaTrackGlobalErrors();
+        var delayedEventReporter = new AccumulatingEventReporter(
+            {delay: 5000}).addEvent;
+        gaTrackButtonClicks(delayedEventReporter);
+        gaTrackImageNumberInput();
+        gaTrackShortcutsHelp(delayedEventReporter);
+        gaTrackLinkClicks();
+        gaTrackAjaxErrors();
+        gaTrackErrorDialog();
+
 
         var cudlService = new CudlService({
             metadataUrlPrefix: config.metadataUrlPrefix,
@@ -1916,8 +1962,12 @@ $(function() {
                         viewer: viewer
                     }),
 
-                    "r": new ButtonPressAction({button: ".cudl-metadata-toggle-btn"}),
-                    "f": new ButtonPressAction({button: ".cudl-btn-fullscreen"}),
+                    "r": new ButtonPressAction({
+                        button: ".cudl-metadata-toggle-btn"
+                    }),
+                    "f": new ButtonPressAction({
+                        button: ".cudl-btn-fullscreen"
+                    }),
 
                     "c": new ButtonPressAction({button: ".cudl-btn-img-prev"}),
                     "v": new ButtonPressAction({button: ".cudl-btn-img-next"})
@@ -1944,7 +1994,11 @@ $(function() {
         $(window).on("hashchange", function () {
             cudlViewerModel.setItemId(getItemId());
             cudlViewerModel.setImageNumber(getPage());
+
+            setMetadataVisibilityFromHash(metadataView);
         });
+        // Catch the initial visibility value in the hash
+        setMetadataVisibilityFromHash(metadataView);
 
         // implement the global store.loadPage() method which is used by the
         // metadata's anchor tags (via onclick attrs) to load pages.
