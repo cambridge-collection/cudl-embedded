@@ -1,6 +1,6 @@
 # Cudl Embedded Viewer Changelog
 
-## 0.0.1 - WIP
+## 0.0.1 - 2015-03-11 - Small bugfixes and cleanup
 
 * Added development server (bin/devserver.js) to correctly serve the viewer
   using the unminified sources
