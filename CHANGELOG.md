@@ -15,6 +15,7 @@
 * Correctly report non-embeddable items, now that cudl-services reports them
   with 403 responses
 * Fix hide/show button on metadata bar not being visible in Safari
+* Fix shortcut help text for W key saying Right instead of Up
 
 ## 0.0.0 - 2014-12-18 - Initial version
 
