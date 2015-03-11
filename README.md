@@ -40,9 +40,9 @@ used without building.
 
 These steps are performed manually at the moment.
 
-1. Build the player using the default config (`$ grunt player`)
-2. Set the version in `package.json` to the version to be tagged (e.g. remove
+1. Set the version in `package.json` to the version to be tagged (e.g. remove
    the -snapshot suffix) and stage it to be committed
+2. Build the player using the default config (`$ grunt player`)
 3. Stage `build/player` to be committed (note that it's ignored in .gitignore)
 4. Commit the staged changes with the message "Release x.y.z"
 5. Tag the release commit with the version number and message "Tag x.y.z"
