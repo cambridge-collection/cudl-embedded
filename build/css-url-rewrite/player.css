@@ -1,0 +1,830 @@
+/*! player.css | cudl.lib.cam.ac.uk */
+
+/* Use border-box */
+html {
+    box-sizing: border-box;
+    line-height: 1;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+
+/* Custom fonts */
+@font-face {
+    font-family: CharisSILW;
+    src: url("fonts/CharisSIL-R.woff");
+}
+@font-face {
+    font-family: CharisSILW;
+    font-style: italic;
+    src: url("fonts/CharisSIL-I.woff");
+}
+@font-face {
+    font-family: CharisSILW;
+    font-weight: bold;
+    src: url("fonts/CharisSIL-B.woff");
+}
+@font-face {
+    font-family: CharisSILW;
+    font-weight: bold;
+    font-style: italic;
+    src: url("fonts/CharisSIL-BI.woff");
+}
+
+
+html, button, input[type=text], .fa > * {
+    font-family: CharisSILW, Georgia, 'Times New Roman', serif;
+    color: #e5e5e5;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+html, body, input {
+    font-size: 14px;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 18px 0;
+}
+
+h2 {
+    font-size: 17px;
+    margin: 14px 0;
+    font-weight: normal;
+}
+
+p, .videoCaption {
+    margin: 5px 0;
+}
+
+a {
+    color: #8FB2E8;
+    text-decoration: inherit;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+button[disabled], input[disabled] {
+    cursor: not-allowed;
+}
+
+.cudl-embedded-object-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+}
+.cudl-embedded-object-wrapper object,
+.cudl-embedded-object-wrapper embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.videoCaption {
+    text-align: center;
+}
+
+.cudl-metadata-title a {
+    color: inherit;
+}
+
+
+.cudl-metadata-summary {
+    font-size: 14px;
+}
+
+.cudl-author, .cudl-date {
+    font-size: 17px;
+}
+
+.cudl-copyright-statement {
+    font-size: 0.8em;
+    margin: 1.5em 0;
+}
+
+.cudl-image-link {
+    position: relative;
+    font-style: italic;
+    /* Prevent breaking over multiple lines, as the dotted underline doesn't
+       work then. */
+    white-space: nowrap;
+}
+.cudl-image-link:hover {
+    text-decoration: none;
+}
+.cudl-image-link:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 4px;
+    width: 100%;
+    border-bottom: 1px dotted #8FB2E8;
+}
+.cudl-image-link:hover:after {
+    border-bottom-style: solid;
+}
+
+.cudl-viewer {
+    overflow: hidden;
+    background: #000000;
+}
+
+/* Inner shadow around openseadragon viewer */
+.pointerevents .openseadragon-container:before {
+    content: "";
+    display: block;
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    box-shadow: inset 0 0 20px 5px rgba(0,0,0,0.5);
+    z-index: 1;
+}
+
+.cudl-viewer header {
+
+      overflow: hidden;
+    position: absolute;
+    z-index: 3;
+    width: 100%;
+
+    border-bottom: 1px solid #535353;
+    /* ie9 doesn't know about gradients, so set a colour first which it
+       will use instead.*/
+    background: rgba(0, 0, 0, 0.88);
+    background:
+        linear-gradient(
+            to top,
+            rgba(255, 255, 255, 0.08) 0%,
+            rgba(255, 255, 255, 0) 6px),
+        rgba(0, 0, 0, 0.88);
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.35);
+
+    /* TODO: ensure contents match this */
+    height: 32px;
+}
+
+.cudl-ucam-logo {
+    display: inline-block;
+    margin: 4px 0 4px 6px;
+
+    position: relative;
+    z-index: 4;
+}
+
+.cudl-page-position {
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 3px 0 0 0;
+    z-index: 3;
+}
+.cudl-page-position .cudl-btn {
+    vertical-align: top;
+}
+.cudl-page-position .cudl-btn {
+    margin: 0 6px;
+}
+.cudl-img-number {
+    min-width: 2.5em;
+    display: inline-block;
+}
+
+/* The img/page number input which looks like regular text while not being
+   interacted with. */
+.cudl-img-current {
+    margin-right: 3px;
+    text-align: right;
+    width: 2.5em;
+    padding: 0;
+
+    /* Override input styling to look like regular text */
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 3px;
+
+    transition: background 0.1s, border 0.1s;
+}
+.cudl-img-current:hover, .cudl-img-current:focus {
+    background: #ececec;
+    color: #3b3b3b;
+}
+.cudl-img-current:hover:not(:focus) {
+    background: #e1e1e1;
+    box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35),
+                0 0 5px 2px rgba(255, 255, 255, 0.5);
+    border: 1px solid #e1e1e1;
+}
+.cudl-img-current:focus {
+    outline: none;
+    box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35),
+                0 0 5px 2px rgba(72, 147, 232, 0.5);
+    border: 1px solid #61a8f1
+}
+.cudl-img-last {
+    margin-left: 3px;
+    text-align: left;
+}
+
+.cudl-viewer-content {
+    height: 100%;
+    /*position: relative;*/
+    padding: 0;
+}
+.cudl-viewer-metadata {
+    /* Position on the right, under the header bar. */
+    position: absolute;
+    right: 0;
+    top: 32px;
+    bottom: 0;
+    width: 320px;
+
+    /* Animate the transform which hides the metadata */
+    transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.cudl-viewer-metadata-container {
+    /* Raise above hide button */
+    position: relative;
+    z-index: 2;
+
+    height: 100%;
+    width: 100%;
+
+    background-color: rgba(0, 0, 0, 0.88);
+    border-style: solid;
+    border-color: #535353;
+    border-width: 0;
+}
+/* Drop shadow in metadata */
+.pointerevents .cudl-viewer-metadata:before {
+    /* Overlay over the visible content area*/
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+
+    /* Need to ignore pointer events so that the metadata underneath can
+       receive clicks/scrolls etc. */
+    pointer-events: none;
+
+    /* Draw a black gradient at top and bottom to simulate a shadow. */
+    background:
+        linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.5) 0px,
+                rgba(0, 0, 0, 0) 10px),
+        linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.5) 0px,
+                rgba(0, 0, 0, 0) 10px);
+
+    z-index: 3;
+}
+
+
+.hidden .cudl-viewer-metadata-content {
+    /* hide the content when the sidebar is shifted off screen to avoid
+       focusing it w/ tab etc. */
+    visibility: hidden;
+}
+
+.cudl-viewer-metadata-content {
+    /* Transition visibility over the same time as the sidebar is animated
+       so that it becomes hidden once it's slid off the screen. Otherwise
+       it becomes hidden as soon as it starts to slide away. */
+    transition: visibility 0.8s;
+
+    padding: 10px 9px;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    height: 100%;
+}
+/* Reduce the spacing of the first metadata element as there's padding
+   provided by the container. */
+.cudl-viewer-metadata-content .cudl-metadata > :first-child {
+    margin-top: 0px;
+}
+
+.cudl-viewer-metadata-content img {
+    max-width: 100%;
+}
+
+.cudl-viewer-metadata-container footer {
+    border-top: 1px solid #626262;
+    padding-top: 7px;
+}
+.cudl-viewer-metadata-container footer .cudl-logos {
+    text-align: center;
+    margin: 0px -5px;
+}
+.cudl-viewer-metadata-container footer .cudl-logos a {
+    display: inline-block;
+    margin: 4px;
+}
+
+.cudl-viewer-player {
+    height: 100%;
+    width: 100%;
+}
+
+.cudl-viewer-buttons {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+.cudl-viewer-buttons:hover {
+    opacity: 1;
+}
+.cudl-viewer-buttons .cudl-btn {
+    margin: 4px;
+}
+
+.cudl-btn {
+    border: 1px solid #a7a7a7;
+    background: rgba(41, 41, 41, 0.8);
+    border-radius: 4px;
+    color: white;
+    box-shadow: 0px 4px 5px 0 rgba(0, 0, 0, 0.35);
+    text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+
+    padding: 4px 5px;
+    font-size: 14px;
+    line-height: 14px;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+.cudl-btn:focus {
+    outline: none;
+    box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35),
+                0 0 5px 2px rgba(72, 147, 232, 0.5);
+    border: 1px solid #61a8f1;
+}
+.cudl-btn:hover {
+    border: 1px solid #5fb8ff;
+}
+.cudl-btn:active {
+    background: #314d93;
+}
+
+.cudl-metadata-toggle-btn {
+    position: absolute;
+    z-index: 1;
+
+    height: auto;
+    width: auto;
+
+    padding: 5px 8px;
+}
+.cudl-metadata-toggle-btn:before {
+    content: "Hide";
+}
+.hidden .cudl-metadata-toggle-btn:before {
+    content: "Show";
+}
+
+.cudl-btn-fullscreen {
+    transition: width 1.3s ease;
+    float: right;
+    z-index: 4;
+    position: relative;
+    margin: 3px 6px 0 0;
+}
+.cudl-btn-fullscreen .cudl-exit-fullscreen {
+    display: none;
+    padding-left: 4px;
+}
+.cudl-fullscreen .cudl-btn-fullscreen .cudl-exit-fullscreen {
+    display: inline;
+}
+
+/* Wide/normal layout */
+@media (min-width: 460px) {
+
+    .cudl-viewer-metadata-container {
+        padding: 9px;
+
+        border-left-width: 1px;
+
+        background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0.08) 0%,
+                rgba(255, 255, 255, 0) 10px),
+        rgba(0, 0, 0, 0.88); box-shadow: -4px 0px 5px 0 rgba(0, 0, 0, 0.35);
+    }
+
+    .cudl-viewer-metadata.hidden {
+        /* Slide the sidebar off screen. */
+        -ms-transform: translate(304px, 0px);
+        -webkit-transform: translate(304px, 0px);
+        transform: translate(304px, 0px);
+    }
+
+    .pointerevents .cudl-viewer-metadata:before {
+        left: 1px;
+        top: 9px;
+        bottom: 9px;
+    }
+
+    .cudl-metadata-toggle-btn {
+        top: 30%;
+        left: 0;
+
+        border-radius: 0 0 3px 3px;
+        border-top: none;
+
+        -ms-transform: rotate(90deg);
+        -webkit-transform: rotate(90deg);
+        transform: rotate(90deg);
+
+        -ms-transform-origin: 0 0;
+        -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
+
+        box-shadow: 4px 0px 5px 0 rgba(0, 0, 0, 0.35);
+    }
+    .cudl-metadata-toggle-btn:focus {
+        border-top: none;
+        box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35), /* Inner shadow */
+        0 0 5px 2px rgba(72, 147, 232, 0.5), /* Outer blue glow indicating focus */
+        4px 0px 5px 0 rgba(0, 0, 0, 0.35);   /* Outer black drop shadow */
+    }
+    .cudl-metadata-toggle-btn:hover {
+        border-top: none;
+    }
+
+}
+
+/* Narrow layout */
+@media (max-width: 459px) {
+
+    .cudl-viewer header {
+        height: 64px;
+    }
+
+    .cudl-page-position {
+        top: 32px;
+    }
+
+    .cudl-btn-img-next {
+        float: right;
+    }
+    .cudl-btn-img-prev {
+        float: left;
+    }
+
+    .cudl-viewer-metadata {
+        width: 100%;
+        top: 35%;
+    }
+
+    .cudl-viewer-metadata-container {
+        /* Add some space above the metadata scroll area so that it doesn't cut
+           off right under the border when scrolled down. */
+        padding: 9px;
+        padding-top: 18px;
+
+        border-top-width: 1px;
+
+        background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.08) 0%,
+                rgba(255, 255, 255, 0) 10px),
+                rgba(0, 0, 0, 0.88);
+        box-shadow: 0 -4px 5px 0 rgba(0, 0, 0, 0.35);
+    }
+    .pointerevents .cudl-viewer-metadata:before {
+        left: 0;
+        top: 19px;
+        bottom: 9px;
+    }
+
+    .cudl-viewer-metadata.hidden {
+        /* Slide the sidebar off screen. */
+        -ms-transform: translate(0, 100%) translate(0, -10px);
+        -webkit-transform: translate(0, 100%) translate(0, -10px);
+        -moz-transform: translate(0, 100%) translate(0, -10px);
+        transform: translate(0, 100%) translate(0, -10px);
+    }
+
+    .hidden .cudl-viewer-metadata-content {
+        overflow-y: hidden;
+    }
+
+    .cudl-metadata-toggle-btn {
+        top: 0;
+        right: 25%;
+
+        transform-origin: bottom left;
+        -webkit-transform-origin: bottom left;
+        -ms-transform-origin: bottom left;
+
+        transform: translateY(-100%);
+        -webkit-transform: translateY(-100%);
+        -ms-transform: translateY(-100%);
+
+        border-radius: 3px 3px 0px 0px;
+        border-bottom: none;
+        padding: 5px 8px;
+
+        box-shadow: 0px -4px 5px 0 rgba(0, 0, 0, 0.35);
+        z-index: 1;
+
+    }
+    .cudl-metadata-toggle-btn:focus {
+        border-bottom: none;
+        box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.35), /* Inner shadow */
+                    0 0 5px 2px rgba(72, 147, 232, 0.5), /* Outer blue glow indicating focus */
+                    0px -4px 5px 0 rgba(0, 0, 0, 0.35);   /* Outer black drop shadow */
+    }
+    .cudl-metadata-toggle-btn:hover {
+        border-bottom: none;
+    }
+
+    .cudl-viewer-buttons {
+        top: 74px;
+        left: 2px;
+        width: 34px;
+    }
+}
+
+/* Loading indicator and its animations */
+.loading .loading-indicator {
+    visibility: visible;
+    opacity: 1;
+}
+.loading-indicator {
+    transition: opacity 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 14%;
+    z-index: 5;
+    margin: 0 auto;
+
+    background: rgba(0, 0, 0, 0.88);
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.08) 0%,
+            rgba(255, 255, 255, 0) 10px),
+        rgba(0, 0, 0, 0.88);
+    box-shadow: 0 2px 27px 5px rgba(39, 148, 205, 0.75);
+    border: 2px solid #5FBEF0;
+
+    border-radius: 8px;
+
+    display: block;
+    padding: 5px;
+    width:150px;
+}
+.loading-indicator::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* All these elements wrapping the .ball are required to auto size the balls
+   relative to the .loading-indicator's width. */
+.ball-container {
+    display: block;
+    float: left;
+    width: 25%;
+    padding: 5px;
+}
+
+.ball-wrapper {
+    padding-bottom: 100%;
+    position: relative;
+}
+
+.ball {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background: rgb(200, 200, 200);
+    border-radius: 50%;
+
+    box-shadow: inset 0px 0px 3px 1px rgba(0, 0, 0, 0.3),
+    0px 0px 3px 1px rgba(0, 0, 0, 0.3);
+
+    border: 1px solid rgb(173, 173, 173);
+
+    -webkit-animation-duration: 1.3s;
+    -webkit-animation-name: loading-ball;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-direction: normal;
+    animation-duration: 1.3s;
+    animation-name: loading-ball;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+}
+
+.ball-container:nth-child(0n+1) .ball {
+    -webkit-animation-delay: 0.1s;
+    animation-delay: 0.1s;
+}
+.ball-container:nth-child(0n+2) .ball {
+    -webkit-animation-delay: 0.2s;
+    animation-delay: 0.2s;
+}
+.ball-container:nth-child(0n+3) .ball {
+    -webkit-animation-delay: 0.3s;
+    animation-delay: 0.3s;
+}
+.ball-container:nth-child(0n+4) .ball {
+    -webkit-animation-delay: 0.4s;
+    animation-delay: 0.4s;
+}
+
+@-webkit-keyframes loading-ball {
+    from {
+        transform: scale(0.1);
+        -webkit-transform: scale(0.1);
+    }
+    20% {
+        transform: scale(1);
+        -webkit-transform: scale(1);
+    }
+    to {
+        transform: scale(0.1);
+        -webkit-transform: scale(0.1);
+    }
+}
+@keyframes loading-ball {
+    from {
+        transform: scale(0.1);
+        -webkit-transform: scale(0.1);
+    }
+    20% {
+        transform: scale(1);
+        -webkit-transform: scale(1);
+    }
+    to {
+        transform: scale(0.1);
+        -webkit-transform: scale(0.1);
+    }
+}
+
+/* Fallback for IE9 which doesn't support animations: hide the bouncy balls
+   and show some boring text. */
+.loading-old-browser {
+    display: none;
+    font-size: 25px;
+    margin: 10px;
+}
+.no-cssanimations .loading-old-browser {
+    display: block;
+}
+.no-cssanimations .ball-container {
+    display: none;
+}
+
+
+/* Error message */
+.errors {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 32px;
+    z-index: 5;
+    margin: 0 auto;
+
+    max-width: 100%;
+    width:325px;
+}
+
+.error {
+    margin: 22px;
+
+    background: rgba(0, 0, 0, 0.88);
+    background:
+    linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.08) 0%,
+            rgba(255, 255, 255, 0) 10px),
+    rgba(0, 0, 0, 0.88);
+    box-shadow: 0 2px 27px 5px rgba(205, 49, 44, 0.75);
+    border: 2px solid #f06354;
+
+    border-radius: 8px;
+
+    display: block;
+    padding: 20px;
+}
+.error *:first-child {
+    margin-top: 0;
+}
+
+.error .cudl-btn-close {
+    margin: 0 0 5px 10px;
+    float: right;
+    position: relative;
+    top: -5px;
+    right: -5px;
+}
+
+
+/* Custom scrollbars for webkit browsers.
+   This makes the scrollbar less obtrusive.*/
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: rgba(47, 47, 47, 1);
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #6f6f6f;
+    width:100%;
+    border-radius: 5px;
+    box-shadow: inset 0 0 4px 2px rgba(255, 255, 255, 0.1),
+                0 0 4px 2px rgba(0, 0, 0, 0.3);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #656565;
+
+}
+::-webkit-scrollbar-thumb:active {
+    background-color: #5d5d5d;
+}
+
+
+/* Footer links */
+.cudl-footer-links {
+    padding: 0;
+    text-align: center;
+    font-variant: small-caps;
+    font-size: 12px;
+}
+.cudl-footer-links a {
+    color: inherit;
+}
+
+.cudl-footer-links li {
+    display: inline;
+
+}
+.cudl-footer-links li:not(:last-child):after {
+    content: " | ";
+}
+
+.cudl-shortcut-definitions {
+    display: none;
+
+    margin: 0 25px;
+    border-width: 0px 1px;
+    border-style: solid;
+    border-color: #626262;
+    padding: 0 15px;
+}
+
+.cudl-shortcut-definitions h3 {
+    font-variant: small-caps;
+}
+
+.cudl-shortcut-definitions table {
+    width: 100%;
+}
+
+.cudl-shortcut-definitions tbody {
+    vertical-align: baseline;
+    margin-bottom: 5px;
+}
+
+.cudl-shortcut-definitions td {
+    border-bottom: 1px solid #2A2A2A;
+    padding: 3px;
+}
+
+.cudl-shortcut-definitions td:last-child {
+    font-weight: bold;
+}
