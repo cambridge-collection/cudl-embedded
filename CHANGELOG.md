@@ -1,6 +1,8 @@
 # Cudl Embedded Viewer Changelog
 
-## 0.0.2 - WIP
+## 0.0.2 - 2015-04-23
+
+* Fix broken link to university homepage on the top left logo (#7)
 
 ## 0.0.1 - 2015-03-11 - Small bugfixes and cleanup
 
