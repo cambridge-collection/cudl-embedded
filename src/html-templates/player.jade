@@ -6,16 +6,9 @@ html
         meta(name="viewport", content="initial-scale=1")
         meta(charset="utf-8")
         block css
-            link(rel='stylesheet', href='lib/normalize.css')
-            link(rel='stylesheet', href='stylesheets/player.css')
-            link(rel='stylesheet', href='lib/font-awesome/css/font-awesome.css')
+            link(rel="stylesheet", href=__webpack_public_path__ + styleFilename)
         block javascript
-            script(type="text/javascript", src="lib/google-analytics.js")
-            script(type='text/javascript' src="lib/modernizr.custom.js")
-            script(type='text/javascript' src="lib/openseadragon/openseadragon.js")
-            script(type='text/javascript' src="lib/jquery.js")
-            script(type='text/javascript', src='scripts/player.js')
-            script(type='text/javascript', src='scripts/init.js')
+            script(type="text/javascript", src=__webpack_public_path__ + scriptFilename)
         script#cudl-metadata-template(type='text/html').
             <h1 class="cudl-metadata-title"><a title="View this item on the Cambridge University Digital Library" target="_blank"></a></h1>
             <h2 class="cudl-metadata-summary"></h2>
@@ -35,19 +28,12 @@ html
                 <a href="" target="_blank" title="">Cambridge University Digital Library</a> instead.
             </p>
         script#config(type="application/json")
-            block config
-                | {
-                |     "googleAnalyticsTrackingId": "UA-57174577-1",
-                |     "metadataUrlPrefix": "http://cudltest.localhost:3000/v1/metadata/json/",
-                |     "metadataUrlSuffix": "",
-                |     "dziUrlPrefix": "http://cudl.lib.cam.ac.uk",
-                |     "metadataUrlHost": "//cudl.lib.cam.ac.uk:80"
-                | }
+            != JSON.stringify(settings).replace(/<\/script/, '<\\u002Fscript')
     body.cudl-viewer.loading
             header
                 a.cudl-ucam-logo(href="https://www.cam.ac.uk/", target="_blank", title="University of Cambridge")
-                    img(src="images/player/cam-uni-1x.png",
-                        srcset="images/player/cam-uni-1x.png 1x, images/player/cam-uni-2x.png 2x, images/player/cam-uni-3x.png 3x",
+                    img(src=require('../images/player/cam-uni-1x.png'),
+                        srcset="#{require('../images/player/cam-uni-1x.png')} 1x, #{require('../images/player/cam-uni-2x.png')} 2x, #{require('../images/player/cam-uni-3x.png')} 3x",
                         alt="University of Cambridge logo")
                 .cudl-page-position
                     button.cudl-btn.cudl-btn-img-prev.fa.fa-arrow-left(title="Go to the previous image [c]")
@@ -72,9 +58,9 @@ html
                             footer
                                 div.cudl-logos
                                     a(title="University of Cambridge Digital Library", target="_blank", href="http://cudl.lib.cam.ac.uk/")
-                                        img.cudl-logo(alt="University of Cambridge Digital Library", src="images/player/cudl-logo-1x.png", srcset="images/player/cudl-logo-1x.png 1x, images/player/cudl-logo-2x.png 2x, images/player/cudl-logo-3x.png 3x")
+                                        img.cudl-logo(alt="University of Cambridge Digital Library", src="#{require('../images/player/cudl-logo-1x.png')}", srcset="#{require('../images/player/cudl-logo-1x.png')} 1x, #{require('../images/player/cudl-logo-2x.png')} 2x, #{require('../images/player/cudl-logo-3x.png')} 3x")
                                     a(title="Cambridge University Library", target="_blank", href="http://www.lib.cam.ac.uk/")
-                                        img.cudl-cul-logo(alt="Cambridge University Library", src="images/player/cul-logo-1x.png" srcset="images/player/cul-logo-1x.png 1x, images/player/cul-logo-2x.png 2x, images/player/cul-logo-3x.png 3x")
+                                        img.cudl-cul-logo(alt="Cambridge University Library", src="#{require('../images/player/cul-logo-1x.png')}" srcset="#{require('../images/player/cul-logo-1x.png')} 1x, #{require('../images/player/cul-logo-2x.png')} 2x, #{require('../images/player/cul-logo-3x.png')} 3x")
 
                                 div.cudl-shortcut-definitions
                                     h3 Keyboard Shortcuts

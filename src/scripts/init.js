@@ -1,5 +1,12 @@
+// These are loaded for their side-effects
+import 'google-analytics';
+import 'modernizr.custom';
+
+import $ from 'jquery';
+
+
 $(function() {
-    var config = null;
+    let config = null;
     try {
         config = JSON.parse($("#config").text());
     }
@@ -8,6 +15,7 @@ $(function() {
     }
 
     if(config !== null) {
-        window.CudlViewer.initFromConfig(config);
+        // player.js needs to be loaded after the DOM is loaded
+        require('./player.js').initFromConfig(config);
     }
 });
