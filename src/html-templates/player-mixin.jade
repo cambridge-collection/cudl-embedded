@@ -1,0 +1,135 @@
+mixin player(rootTag)
+    //- Allow overriding the root tag from body, as $.parseHTML ignores body
+    //- tags...
+    #{rootTag || 'body'}.cudl-viewer.loading
+        script#cudl-metadata-template(type='text/html').
+            <h1 class="cudl-metadata-title"><a title="View this item on the Cambridge University Digital Library" target="_blank"></a></h1>
+            <h2 class="cudl-metadata-summary"></h2>
+            <section class="cudl-metadata-abstract"></section>
+            <p class="cudl-copyright-statement"></p>
+        script#cudl-error-template(type='text/html').
+            <div class="error">
+                <h2>
+                    <button class="cudl-btn cudl-btn-close fa fa-close" title="Hide this error"></button>
+                    <span></span>
+                </h2>
+                <p></p>
+            </div>
+        script#cudl-error-no-embed-template(type='text/html').
+            <p>
+                Sorry, the item <em></em> cannot be embedded at this time. Please view it on the
+                <a href="" target="_blank" title="">Cambridge University Digital Library</a> instead.
+            </p>
+        header
+            a.cudl-ucam-logo(href="https://www.cam.ac.uk/", target="_blank", title="University of Cambridge")
+                img(src=require('../images/player/cam-uni-1x.png'),
+                    srcset="#{require('../images/player/cam-uni-1x.png')} 1x, #{require('../images/player/cam-uni-2x.png')} 2x, #{require('../images/player/cam-uni-3x.png')} 3x",
+                    alt="University of Cambridge logo")
+            .cudl-page-position
+                button.cudl-btn.cudl-btn-img-prev.fa.fa-arrow-left(title="Go to the previous image [c]")
+                input.cudl-img-number.cudl-img-current(name="img-number", value="—", type="text", accesskey="l", title="Current image")
+                | /
+                span.cudl-img-number.cudl-img-last(title="Total images") —;
+                button.cudl-btn.cudl-btn-img-next.fa.fa-arrow-right(title="Go to the next image [v]")
+            button.cudl-btn.cudl-btn-fullscreen.fa.fa-arrows-alt(title="Go fullscreen [f]")
+                span.cudl-exit-fullscreen Exit fullscreen
+        section.cudl-viewer-content
+            .cudl-viewer-player
+            .cudl-viewer-buttons
+                button.cudl-btn.cudl-btn-rotate-left.fa.fa-rotate-left(title="Rotate the image 90° left [z]")
+                button.cudl-btn.cudl-btn-rotate-right.fa.fa-rotate-right(title="Rotate the image 90° right [x]")
+                button.cudl-btn.cudl-btn-expand.fa.fa-plus(title="Zoom in to the image [e]")
+                button.cudl-btn.cudl-btn-compress.fa.fa-minus(title="Zoom out of the image [q]")
+            article.cudl-viewer-metadata.shown
+                button.cudl-btn.cudl-metadata-toggle-btn(title="Show/hide the sidebar [r]")
+                .cudl-viewer-metadata-container
+                    .cudl-viewer-metadata-content
+                        .cudl-metadata
+                        footer
+                            div.cudl-logos
+                                a(title="University of Cambridge Digital Library", target="_blank", href="http://cudl.lib.cam.ac.uk/")
+                                    img.cudl-logo(alt="University of Cambridge Digital Library", src="#{require('../images/player/cudl-logo-1x.png')}", srcset="#{require('../images/player/cudl-logo-1x.png')} 1x, #{require('../images/player/cudl-logo-2x.png')} 2x, #{require('../images/player/cudl-logo-3x.png')} 3x")
+                                a(title="Cambridge University Library", target="_blank", href="http://www.lib.cam.ac.uk/")
+                                    img.cudl-cul-logo(alt="Cambridge University Library", src="#{require('../images/player/cul-logo-1x.png')}" srcset="#{require('../images/player/cul-logo-1x.png')} 1x, #{require('../images/player/cul-logo-2x.png')} 2x, #{require('../images/player/cul-logo-3x.png')} 3x")
+
+                            div.cudl-shortcut-definitions
+                                h3 Keyboard Shortcuts
+                                table
+                                    thead
+                                        tr
+                                            td(colspan=2) Action
+                                            td Key
+                                    tbody
+                                        tr
+                                            td(rowspan="4") Pan:
+                                            td Up
+                                            td w
+                                        tr
+                                            td Left
+                                            td a
+                                        tr
+                                            td Down
+                                            td s
+                                        tr
+                                            td Right
+                                            td d
+                                    tbody
+                                        tr
+                                            td(rowspan="2") Zoom:
+                                            td Out
+                                            td q
+                                        tr
+                                            td In
+                                            td e
+                                    tbody
+                                        tr
+                                            td(rowspan="4") Rotate:
+                                            td 90° Left
+                                            td z
+                                        tr
+                                            td 90° Right
+                                            td x
+                                        tr
+                                            td 10° Left
+                                            td Z
+                                        tr
+                                            td 10° Right
+                                            td X
+                                    tbody
+                                        tr
+                                            td(rowspan="2") Image:
+                                            td Next
+                                            td v
+                                        tr
+                                            td Previous
+                                            td c
+                                    tbody
+                                        tr
+                                            td(colspan=2) Fullscreen on/off
+                                            td f
+                                    tbody
+                                        tr
+                                            td(colspan=2) Sidebar show/hide
+                                            td r
+                            ul.cudl-footer-links
+                                li
+                                    a(href="http://www.lib.cam.ac.uk/privacy_statement.html", target="_blank") Privacy
+                                li
+                                    a(href="http://cudl.lib.cam.ac.uk/terms/", target="_blank") Terms & Conditions
+                                li
+                                    a.cudl-toggle-shortcuts(title="Show keyboard shortcuts", href="javascript:0;") Shortcuts
+        .loading-indicator
+            .ball-container
+                .ball-wrapper
+                    .ball
+            .ball-container
+                .ball-wrapper
+                    .ball
+            .ball-container
+                .ball-wrapper
+                    .ball
+            .ball-container
+                .ball-wrapper
+                    .ball
+            .loading-old-browser Loading...
+        .errors
