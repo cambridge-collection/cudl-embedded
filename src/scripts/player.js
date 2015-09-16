@@ -148,8 +148,8 @@ function parseUriQuery(query) {
     var pairs = $.map(parts, function(part) {
         var index = part.indexOf("=");
         if(index >= 0) {
-            key = part.substring(0, index);
-            value = part.substring(index + 1);
+            let key = part.substring(0, index);
+            let value = part.substring(index + 1);
             return $.map([key, value], decodeURIComponent);
         }
     });
