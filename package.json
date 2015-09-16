@@ -32,7 +32,8 @@
     "lodash": "^3",
     "postcss-loader": "^0",
     "style-loader": "^0",
-    "webpack": "^1"
+    "webpack": "^1",
+    "webpack-dev-server": "^1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
