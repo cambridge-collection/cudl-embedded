@@ -1,5 +1,9 @@
 # Cudl Embedded Viewer Changelog
 
+## 0.0.3 - TBA
+
+* Use webpack to build viewer
+
 ## 0.0.2 - 2015-04-23
 
 * Fix broken link to university homepage on the top left logo (#7)
