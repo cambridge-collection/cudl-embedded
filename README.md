@@ -5,6 +5,7 @@ This repository contains the CUDL embedded item viewer.
 It consists of essentially a single page app which is intended to run in an
 iframe.
 
+
 ## Install dependencies
 
 ```
@@ -14,6 +15,7 @@ $ npm install -g webpack webpack-dev-server grunt-cli
 
 `webpack` and `webpack-dev-server` are optional if you're doing everything via
 grunt.
+
 
 ## Developing
 
@@ -27,6 +29,7 @@ The CSS is post-processed by [postcss]() which allows us to use less/sass like
 functionality and more. Again, I've not refactored the vanilla CSS to make use
 of these features. The only postcss processor currently installed is
 autoprefixer.
+
 
 ### Workflow
 
@@ -45,6 +48,23 @@ Once the server's started, the viewer can be accessed at these URLs:
 * http://localhost:8080/viewer - The viewer, taking up the entire browser window
 * http://localhost:8080/webpack-dev-server/viewer - As above, but with a status bar showing HMR status
 * http://localhost:8080/examples/blog/blog.html - The viewer embedded in a mock blog post
+
+
+### Accessing dev server from external hosts
+
+Because of the way CSS files are created in dev mode, the webpack output public
+path has to be an absolute URL. This will cause the viewer to break if you
+try to acccess it from another host, as the default dev public path is
+`http://localhost:8080/`. You can specify a hostname/IP that the external host
+can use to access the webpack dev server host on the command line:
+
+```
+$ webpack-dev-server --config ./webpack.config.dev.babel.js \
+    # Bind to all interfaces. By default only loopback is bound to
+    --host 0.0.0.0 \
+    # Specify the URL the external host(s) can use to access the server
+    --output-public-path 'http://192.168.1.2:8080/'
+```
 
 
 ## Building
