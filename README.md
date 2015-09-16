@@ -5,35 +5,82 @@ This repository contains the CUDL embedded item viewer.
 It consists of essentially a single page app which is intended to run in an
 iframe.
 
+## Install dependencies
+
+```
+$ npm install
+$ npm install -g webpack webpack-dev-server grunt-cli
+```
+
+`webpack` and `webpack-dev-server` are optional if you're doing everything via
+grunt.
+
 ## Developing
 
-Run `$ npm install` first, then:
+[Webpack](http://webpack.github.io/) is used to build the viewer.
+
+The javascript source can use
+[es6 functionality](https://babeljs.io/docs/learn-es2015/), but at this time
+I've not refactored it from vanila js to make use of es6 features.
+
+The CSS is post-processed by [postcss]() which allows us to use less/sass like
+functionality and more. Again, I've not refactored the vanilla CSS to make use
+of these features. The only postcss processor currently installed is
+autoprefixer.
+
+### Workflow
+
+Configuration is provided to run the viewer in webpack's dev server with [hot
+module replacement](http://webpack.github.io/docs/hot-module-replacement.html) to provide live updates as source files are changed.
+
+Either of the following will launch the dev server:
 
 ```
-$ bin/devserver.js
+$ grunt develop
+$ webpack-dev-server --config webpack.config.dev.babel.js --inline --hot
 ```
 
-The devserver will be available at http://localhost:1234/
+Once the server's started, the viewer can be accessed at these URLs:
 
-The player is available at [/embed/v0/viewer](http://localhost:1234/embed/v0/viewer) on the devserver. It serves
-`src/html-templates/player.jade`.
+* http://localhost:8080/viewer - The viewer, taking up the entire browser window
+* http://localhost:8080/webpack-dev-server/viewer - As above, but with a status bar showing HMR status
+* http://localhost:8080/examples/blog/blog.html - The viewer embedded in a mock blog post
 
 
 ## Building
 
-Run `$ npm install` first, then:
+The default webpack config contains the production config. It's slightly
+different to the dev config. An HTML file is created with the default template
+pre-rendered. The JS and CSS are separate files.
+
+To build, either use:
 
 ```
-$ grunt player
+$ webpack -p
+```
+(`-p` enables production mode, which turns on minification and other bundle size optimisations.)
+
+Or:
+```
+$ grunt build
 ```
 
-to build the player with the default config (`config/default.json`). Use
-`$ grunt player-custom-config` to build with `config/custom.json` (which you'll
-need to provide first).
+The grunt build has the advantage that it cleans `built/` before running.
 
-The output is created in `build/player/`. Tagged version release commits contain
-the default player pre-built in `build/player/`, so they can be checked out and
-used without building.
+
+## Viewer Configuration
+
+The commands above for building the viewer in dev and production mode will use
+the default config (`./config/default.json`).
+
+Set the `CONFIG` envar to the `require()` path of the desired config file to
+use a different one. For example:
+
+```
+$ CONFIG=./config/custom.json webpack -p
+```
+
+This works in the same way for dev and production builds.
 
 
 ## Releasing a version
@@ -42,8 +89,8 @@ These steps are performed manually at the moment.
 
 1. Set the version in `package.json` to the version to be tagged (e.g. remove
    the -snapshot suffix) and stage it to be committed
-2. Build the player using the default config (`$ grunt player`)
-3. Stage `build/player` to be committed (note that it's ignored in .gitignore)
+2. Build the player using the default config (`$ grunt build`)
+3. Stage `build/*` to be committed (note that it's ignored in .gitignore, so `-f` will be required)
 4. Commit the staged changes with the message "Release x.y.z"
 5. Tag the release commit with the version number and message "Tag x.y.z"
 6. Create another commit which reverts the effects of the release commit, and
