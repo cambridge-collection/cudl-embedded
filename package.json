@@ -2,7 +2,6 @@
   "name": "cudl-embedded",
   "version": "0.0.3-snapshot",
   "description": "The embeddable item viewer for cudl.lib.cam.ac.uk",
-  "main": "index.js",
   "directories": {
     "example": "examples"
   },
@@ -32,8 +31,6 @@
     "jade-loader": "^0",
     "lodash": "^3",
     "postcss-loader": "^0",
-    "q": "^1",
-    "source-map-support": "^0",
     "style-loader": "^0",
     "webpack": "^1"
   },
