@@ -14,12 +14,12 @@ let extractCss = new ExtractTextPlugin(
 
 export default getConfig({
     dev: false,
-    filterOutput: o => {
-        o.filename = 'viewer-[chunkhash].js'
-        return o;
+    filterOutput: output => {
+        output.filename = 'viewer-[chunkhash].js';
+        return output;
     },
-    filterLoaders: l => {
-        return l.concat([
+    filterLoaders: loaders => {
+        return loaders.concat([
             // Transform CSS files with PostCSS
             {
                 test: /\.css$/,
@@ -30,13 +30,14 @@ export default getConfig({
             }
         ]);
     },
-    filterPlugins: p => {
-        return p.concat([
+    filterPlugins: plugins => {
+        return plugins.concat([
             extractCss,
 
             new HtmlWebpackPlugin({
                 filename: 'viewer.html',
-                template: path.resolve(__dirname, 'src/html-templates/html.jade')
+                template: path.resolve(__dirname,
+                                       'src/html-templates/html.jade')
             })
         ]);
     }

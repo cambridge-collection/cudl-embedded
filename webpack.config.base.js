@@ -49,8 +49,8 @@ export function  getConfig(options) {
                 path.join(__dirname, 'src/lib')
             ],
             alias: {
-                'openseadragon':
-                    'openseadragon/built-openseadragon/openseadragon/openseadragon'
+                'openseadragon': 'openseadragon/built-openseadragon/' +
+                                 'openseadragon/openseadragon'
             }
         },
         module: {
@@ -76,7 +76,7 @@ export function  getConfig(options) {
                 // Use Babel for new js feature support
                 {
                     test: /\.js$/,
-                    exclude: path.resolve(__dirname, 'src/lib'),
+                    include: path.resolve(__dirname, 'src/scripts'),
                     loader: require.resolve('babel-loader')
                 },
                 {
@@ -87,7 +87,8 @@ export function  getConfig(options) {
             ])
         },
 
-        // The css generated from the less gets run through these postcss filters
+        // The css generated from the less gets run through these
+        // postcss filters.
         postcss: [require('autoprefixer')],
 
         plugins: filterPlugins([
@@ -98,4 +99,4 @@ export function  getConfig(options) {
             })
         ])
     };
-};
+}
