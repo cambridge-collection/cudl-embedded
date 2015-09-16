@@ -2,25 +2,37 @@
   "name": "cudl-embedded",
   "version": "0.0.3-snapshot",
   "description": "The embeddable item viewer for cudl.lib.cam.ac.uk",
-  "main": "index.js",
   "directories": {
     "example": "examples"
   },
-  "dependencies": {},
+  "dependencies": {
+    "font-awesome": "^4",
+    "jquery": "^1",
+    "normalize.css": "^3"
+  },
   "devDependencies": {
+    "assets-webpack-plugin": "^2",
+    "autoprefixer": "^6",
+    "babel-core": "^5",
+    "babel-loader": "^5",
+    "css-loader": "^0",
+    "docopt": "^0",
+    "exports-loader": "^0",
     "express": "^4",
+    "extract-text-webpack-plugin": "^0",
+    "file-loader": "^0",
     "grunt": "^0",
     "grunt-contrib-clean": "^0",
-    "grunt-contrib-copy": "^0",
-    "grunt-contrib-cssmin": "^0",
-    "grunt-contrib-jade": "^0",
     "grunt-contrib-jshint": "^0",
-    "grunt-contrib-uglify": "^0",
-    "grunt-css-url-rewrite": "^0",
-    "grunt-git-describe": "^2",
-    "grunt-serve": "^0",
+    "grunt-shell": "^1",
+    "html-webpack-plugin": "^2",
+    "imports-loader": "^0",
     "jade": "^1",
-    "uglify-js": "^2"
+    "jade-loader": "^0",
+    "lodash": "^3",
+    "postcss-loader": "^0",
+    "style-loader": "^0",
+    "webpack": "^1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

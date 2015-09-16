@@ -11,9 +11,11 @@
 
 ## Dependencies
 node_modules/
+bower_components/
 
 ## Generated files
 build/
+built/
 
 ## User specific files
 config/custom.json

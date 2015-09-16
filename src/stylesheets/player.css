@@ -1,5 +1,8 @@
 /*! player.css | cudl.lib.cam.ac.uk */
 
+@import "~normalize.css/normalize.css";
+@import "~font-awesome/css/font-awesome.css";
+
 /* Use border-box */
 html {
     box-sizing: border-box;
