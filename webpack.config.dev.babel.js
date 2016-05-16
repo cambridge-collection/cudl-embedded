@@ -1,6 +1,5 @@
 import path from 'path';
 
-import _ from 'lodash';
 import webpack from 'webpack';
 
 import { Config } from 'cudl-webpack-config/lib/config';

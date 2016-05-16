@@ -18,7 +18,7 @@ export function getAppConfig() {
     var configFile = process.env.CONFIG || './config/default';
     var config = require(configFile);
 
-    if(!_(CONFIG_KEYS).map(function(k) { return k in config; }).all()) {
+    if(!_(CONFIG_KEYS).map(function(k) { return k in config; }).every()) {
         throw new Error(`Config file does not define all keys: ${configFile}`);
     }
 

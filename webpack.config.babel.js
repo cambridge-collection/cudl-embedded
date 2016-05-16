@@ -1,6 +1,5 @@
 import path from 'path';
 
-import _ from 'lodash';
 import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
