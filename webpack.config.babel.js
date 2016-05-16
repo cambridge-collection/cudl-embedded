@@ -3,6 +3,7 @@ import path from 'path';
 import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CompressionPlugin from 'compression-webpack-plugin';
 
 import { Config } from 'cudl-webpack-config/lib/config';
 
@@ -34,6 +35,10 @@ export default new Config()
             }),
             new webpack.DefinePlugin({
                 DEV: JSON.stringify(false)
+            }),
+            new CompressionPlugin({
+                test: /\.(js|css|map)$/,
+                minRatio: 0.99
             })
         ]
     });
