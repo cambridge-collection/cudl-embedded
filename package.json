@@ -22,7 +22,7 @@
     "docopt": "^0",
     "exports-loader": "^0",
     "express": "^4",
-    "extract-text-webpack-plugin": "^0",
+    "extract-text-webpack-plugin": "^1",
     "file-loader": "^0",
     "grunt": "^1",
     "grunt-contrib-clean": "^1",
