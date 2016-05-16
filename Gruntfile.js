@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         shell: {
             /** Build embedded viewer for use on real server deployments. */
             build: {
-                command: './node_modules/.bin/webpack -p'
+                command: './node_modules/.bin/webpack -p --bail'
             },
             /** Run the webpack dev server in with hot module reloading */
             develop: {
