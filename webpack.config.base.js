@@ -37,21 +37,10 @@ export default new Config().merge({
         modulesDirectories: ['node_modules', 'bower_components'],
         root: [
             path.join(__dirname, 'src/lib')
-        ],
-        alias: {
-            'openseadragon': 'openseadragon/built-openseadragon/' +
-                             'openseadragon/openseadragon'
-        }
+        ]
     },
     module: {
         loaders: [
-            // Shim openseadragon as a commonjs module
-            {
-                test: /\/openseadragon\.js$/,
-                include: path.resolve(__dirname,
-                                      'bower_components/openseadragon'),
-                loader: 'exports?OpenSeadragon'
-            },
             // Shim modernizr as a commonjs module
             {
                 test: /\/modernizr\.custom(\.js)?$/,

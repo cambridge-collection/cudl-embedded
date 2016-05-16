@@ -8,7 +8,8 @@
   "dependencies": {
     "font-awesome": "^4",
     "jquery": "^1",
-    "normalize.css": "^3"
+    "normalize.css": "^3",
+    "openseadragon": "^2.1.0"
   },
   "devDependencies": {
     "assets-webpack-plugin": "^2",

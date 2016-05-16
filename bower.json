@@ -1,7 +1,0 @@
-{
-  "name": "cudl-embedded",
-  "version": "n/a",
-  "dependencies": {
-    "openseadragon": "^1"
-  }
-}
