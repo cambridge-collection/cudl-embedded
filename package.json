@@ -12,7 +12,6 @@
     "openseadragon": "^2.1.0"
   },
   "devDependencies": {
-    "assets-webpack-plugin": "^2",
     "autoprefixer": "^6",
     "babel-core": "^6",
     "babel-loader": "^6",

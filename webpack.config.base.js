@@ -3,7 +3,6 @@ import path from 'path';
 import _ from 'lodash';
 import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import SaveAssetsJson from 'assets-webpack-plugin';
 
 import { Config } from 'cudl-webpack-config/lib/config';
 
