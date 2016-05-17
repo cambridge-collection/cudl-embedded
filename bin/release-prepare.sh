@@ -1,0 +1,1 @@
+maven-node-release-script/release-prepare.sh

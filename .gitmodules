@@ -1,0 +1,4 @@
+[submodule "bin/maven-node-release-script"]
+	path = bin/maven-node-release-script
+	url = git@bitbucket.org:CUDL/maven-node-release-script.git
+	branch = master
