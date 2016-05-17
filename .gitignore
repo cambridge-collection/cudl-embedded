@@ -19,3 +19,9 @@ built/
 
 ## User specific files
 config/custom.json
+
+## Maven stuff
+pom.xml.*
+release.properties
+target/
+node/
