@@ -1,0 +1,4 @@
+[submodule "bin/maven-node-release-script"]
+	path = bin/maven-node-release-script
+	url = file:///home/hal/workspace/maven-node-release-script/
+	branch = master
