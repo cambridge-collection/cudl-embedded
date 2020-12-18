@@ -1,7 +1,7 @@
 {
     "googleAnalyticsTrackingId": "UA-57175370-1",
-    "metadataUrlPrefix": "//services.cudl.lib.cam.ac.uk/v1/metadata/json/",
+    "metadataUrlPrefix": "https://services.cudl.lib.cam.ac.uk/v1/metadata/json/",
     "metadataUrlSuffix": "",
-    "dziUrlPrefix": "//image01.cudl.lib.cam.ac.uk/",
-    "metadataUrlHost": "//cudl.lib.cam.ac.uk"
+    "dziUrlPrefix": "https://images.lib.cam.ac.uk/",
+    "metadataUrlHost": "https://cudl.lib.cam.ac.uk"
 }

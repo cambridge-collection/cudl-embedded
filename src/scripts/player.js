@@ -1230,6 +1230,13 @@ $.extend(CudlViewerModel.prototype, {
         }
 
         var page = this.getMetadata().getPages()[imageNumber - 1];
+
+        // Temporary hack to add in the DZI format to metadata until we
+        // are able to switch to IIIF
+        if (!page.displayImageURL) {
+            page.displayImageURL = "content/images/"+page.IIIFImageURL+".dzi";
+        }
+
         var url = this.getCudlService().getDziUrl(page.displayImageURL);
 
         var startMillis = now();
