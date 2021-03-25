@@ -36,8 +36,8 @@
     "lodash": "^4",
     "postcss-loader": "^0",
     "style-loader": "^0",
-    "webpack": "^1",
-    "webpack-cli": "^4.2.0",
+    "webpack": "^1.9.13",
+    "webpack-cli": "^1.5.3",
     "webpack-dev-server": "^1",
     "wrap-loader": "^0.1.0"
   },
