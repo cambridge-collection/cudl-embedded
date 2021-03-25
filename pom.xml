@@ -3,7 +3,7 @@
 
     <groupId>ulcambridge.foundations.viewer</groupId>
     <artifactId>embedded-viewer</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.2</version>
     <packaging>jar</packaging>
 
     <name>CUDL Embedded Viewer</name>
@@ -19,7 +19,7 @@
         <connection>scm:git:ssh://git@bitbucket.org/CUDL/cudl-embedded.git</connection>
         <developerConnection>scm:git:ssh://git@bitbucket.org/CUDL/cudl-embedded.git</developerConnection>
         <url>https://bitbucket.org/CUDL/cudl-embedded</url>
-      <tag>HEAD</tag>
+      <tag>0.1.2</tag>
   </scm>
 
     <build>
