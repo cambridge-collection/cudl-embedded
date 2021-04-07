@@ -103,18 +103,84 @@ $ CONFIG=./config/custom.json webpack -p
 This works in the same way for dev and production builds.
 
 
-## Releasing a version
+## ~~Releasing a version~~
 
-These steps are performed manually at the moment.
+~~These steps are performed manually at the moment.~~
 
-1. Set the version in `package.json` to the version to be tagged (e.g. remove
-   the -snapshot suffix) and stage it to be committed
-2. Build the player using the default config (`$ grunt build`)
-3. Stage `build/*` to be committed (note that it's ignored in .gitignore, so `-f` will be required)
-4. Commit the staged changes with the message "Release x.y.z"
-5. Tag the release commit with the version number and message "Tag x.y.z"
-6. Create another commit which reverts the effects of the release commit, and
+~~1. Set the version in `package.json` to the version to be tagged (e.g. remove
+   the -snapshot suffix) and stage it to be committed~~
+~~2. Build the player using the default config (`$ grunt build`)~~
+~~3. Stage `build/*` to be committed (note that it's ignored in .gitignore, so `-f` will be required)~~
+~~4. Commit the staged changes with the message "Release x.y.z"~~
+~~5. Tag the release commit with the version number and message "Tag x.y.z"~~
+~~6. Create another commit which reverts the effects of the release commit, and
    bumps the version in `package.json` to the next version with a `-snapshot`
    suffix. An easy way to do this is to `$ git revert HEAD`, then edit
    `package.json` and `$ git commit --amend` onto the revert commit, changing
-   the commit message to: "Finish x.y.z release".
+   the commit message to: "Finish x.y.z release".~~
+
+## Releasing a version (revised)
+
+It looks like there is a version that is deployed via puppet onto the cudl viewer machines,
+however it does not look like this version is being used. Instead it seems to use the version deployed
+inside the cudl-viewer war.  However, when deploying both versions should be updated, anticipating
+the switch.
+
+0. Create a branch called 'release' in which to make the git release
+
+    `git checkout -b 'release-date'`
+
+1. Check the project https://bitbucket.org/CUDL/maven-node-release-script/src
+is checked out under:
+
+    `bin/maven-node-release-script`
+
+2. Check the script
+
+    `bin/maven-node-release-script/release-prepare.sh`
+
+    is sym-linked to the location
+
+    `bin/release-prepare.sh`
+
+3. Run script `bin/release-prepare.sh`
+
+4. Run `mvn release:perform`
+
+5. Check and merge into master branch
+
+6. Tag release e.g.:
+
+    `git tag -a <version> -m "message" `
+
+7. Push to remote repository
+
+    `git push --tags`
+
+8. Update puppet dev (the staged and live) configuration to use the new tagged version,
+pull in changes on the puppet master and run `puppet agent -t` on the target machine.
+
+10. Hand craft a pom and jar package which has the same format as the existing ones
+under embedded-viewer-assets.
+
+    `mvn install`
+    `mvn deploy`
+    `mvn deploy:deploy-file -DpomFile=<path-to-pom> \
+           -Dfile=<path-to-file> \
+           -DrepositoryId=<id-to-map-on-server-section-of-settings.xml> \
+           -Durl=<url-of-the-repository-to-deploy>`
+
+11. Install this in your local and in the s3 maven repos.
+
+12. Checkout cudl viewer from https://bitbucket.org/CUDL/cudl-viewer/src/master/
+
+13. Update the cudl-viewer-pom
+
+    `<embedded-viewer-assets.version>0.1.3</embedded-viewer-assets.version>`
+
+    to point to the new version.
+
+14. Package and deploy cudl-viewer (see cudl-viewer README for details).
+
+15. Test the deployed viewer on https://cudl.lib.cam.ac.uk/embed/ or
+https://cudl.lib.cam.ac.uk/embed/#item=PH-DOWNHOUSE-EH-88202652&page=1&hide-info=true
