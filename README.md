@@ -172,7 +172,7 @@ under embedded-viewer-assets.
 
 11. Install this in your local and in the s3 maven repos.
 
-12. Checkout cudl viewer from https://bitbucket.org/CUDL/cudl-viewer/src/master/
+12. Checkout cudl viewer from https://github.com/cambridge-collection/cudl-viewer
 
 13. Update the cudl-viewer-pom
 
